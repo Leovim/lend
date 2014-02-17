@@ -40,3 +40,6 @@ nosetests.xml
 
 # pycharm file
 .idea
+
+# config file
+Application/config.py
