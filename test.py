@@ -41,7 +41,7 @@ class Applicaiton(tornado.web.Application):
 
 
 class IndexHandler(tornado.web.RequestHandler):
-    def get(self, arg):
+    def get(self):
         result_json = json.dumps([arg, {'name': "Leo中文", 'age': 20}, {'name': "Smith", 'age': 17}], separators=(',', ':'), encoding="utf-8", indent=4, ensure_ascii=False)
         self.render("index.html", title="Lend", result_json=result_json)
 
