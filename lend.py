@@ -164,6 +164,7 @@ class LoginHandler(tornado.web.RequestHandler):
         # password = "123456"
         if username == options.username and password == options.password:
             user_info = dict(
+                result=1,
                 user_id=options.user_id,
                 phone=options.phone,
                 real_name=options.real_name,
@@ -269,7 +270,8 @@ class LoginHandler(tornado.web.RequestHandler):
             result_json = json.dumps(user_info, separators=(',', ':'), indent=4, encoding="utf-8", ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
         else:
-            self.render("index.html", title="Lend", result_json="error")
+            result_json = json.dumps({"result": 0}, separators=(',', ':'), indent=4, encoding="utf-8", ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
 
 def main():
     http_server = tornado.httpserver.HTTPServer(Applicaiton())
