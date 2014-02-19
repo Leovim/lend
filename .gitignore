@@ -42,4 +42,4 @@ nosetests.xml
 .idea
 
 # config file
-Application/config.py
+Application/dbconfig.py
