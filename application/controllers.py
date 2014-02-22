@@ -1,13 +1,16 @@
 #coding=utf8
 
 import json
-import datetime
+# import datetime
 import tornado.web
 
 
 class IndexHandler(tornado.web.RequestHandler):
     def get(self, arg):
-        result_json = json.dumps([arg, {'name': "Leo中文", 'age': 20}, {'name': "Smith", 'age': 17}], separators=(',', ':'), encoding="utf-8", indent=4, ensure_ascii=False)
+        result_json = json.dumps([arg, {'name': "Leo中文", 'age': 20},
+                                  {'name': "Smith", 'age': 17}],
+                                 separators=(',', ':'), encoding="utf-8",
+                                 indent=4, ensure_ascii=False)
         self.render("index.html", title="Lend", result_json=result_json)
 
 
@@ -34,6 +37,7 @@ class LoginHandler(tornado.web.RequestHandler):
         password = self.get_argument("password", None)
         # username = "sdlu"
         # password = "123456"
-        result_json = json.dumps([], separators=(',', ':'), indent=4, encoding="utf-8", ensure_ascii=False)
+        result_json = json.dumps([], separators=(',', ':'), indent=4,
+                                   encoding="utf-8", ensure_ascii=False)
         self.render("index.html", title="Lend", result_json=result_json)
 
