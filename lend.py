@@ -3,7 +3,7 @@
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
-from config import options, settings
+from application.config import options, settings
 from application import routes
 
 
