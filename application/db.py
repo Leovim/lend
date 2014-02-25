@@ -1,14 +1,11 @@
 #coding=utf8
 
 from sqlalchemy import *
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from config import options
 
 Base = declarative_base()
 engine = create_engine(options.sqlalchemy)
-Session = sessionmaker(bind=engine)
-session = Session()
 
 
 class User(Base):
@@ -44,6 +41,7 @@ class User(Base):
 class Guarantee(Base):
     __tablename__ = 'guarantee'
 
+    guarantee_id = Column(Integer, primary_key=True)
     guarantor_id = Column(Integer, ForeignKey('user.user_id'))
     warrantee_id = Column(Integer, ForeignKey('user.user_id'))
     status = Column(Integer)
