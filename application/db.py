@@ -22,7 +22,7 @@ class User(Base):
     avatar = Column(String(50))
 
     def __init__(self, username, password, phone, real_name=None,
-                 bank_number=None, alipay_number=None, credit=None,
+                 bank_number=None, alipay_number=None, credit=1,
                  avatar=None):
         self.username = username
         self.password = password
