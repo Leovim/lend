@@ -61,3 +61,41 @@ class UserModel():
         up_user.avatar = user['avatar']
         session.commit()
 
+
+class GuaranteeModel():
+    def add_guarantee(self, guarantee):
+        pass
+    
+    def delete_guarantee(self, guarantee_id):
+        pass
+    
+    def change_check(self, guarantee_id):
+        pass
+
+
+class LoanModel():
+    def add_loan(self, loan):
+        pass
+    
+    def delete_loan(self, loan_id):
+        pass
+    
+    def change_due_status(self, loan_id, status):
+        pass
+
+    def change_split_status(self, loan_id, status):
+        pass
+    
+    def change_check_status(self, loan_id, status):
+        pass
+
+
+class BehaviourModel():
+    def add_behaviour(self, behaviour):
+        pass
+    
+    def delete_behaviour(self, behaviour_id):
+        pass
+    
+    def change_status(self, behaviour_id, status):
+        pass
