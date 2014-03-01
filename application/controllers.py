@@ -1,8 +1,16 @@
 #coding=utf8
 
 import json
+import hashlib
 # import datetime
 import tornado.web
+from models import *
+
+class BaseHandler(tornado.web.RequestHandler):
+    user_model = UserModel()
+    guarantee_model = GuaranteeModel()
+    loan_model = LoanModel()
+    behaviour_model = BehaviourModel()
 
 
 class IndexHandler(tornado.web.RequestHandler):
@@ -41,3 +49,17 @@ class LoginHandler(tornado.web.RequestHandler):
                                    encoding="utf-8", ensure_ascii=False)
         self.render("index.html", title="Lend", result_json=result_json)
 
+
+class RegisterHandler(BaseHandler):
+    def post(self):
+        password = self.get_argument('password', None)
+        sha = hashlib.sha1()
+        sha.update(password)
+        sha_password = sha.hexdigest()
+
+        user = dict(
+            username=self.get_argument('username', None),
+            password=sha_password,
+            phone=self.get_argument('phone', None)
+        )
+        self.user_model.add_user(user)
