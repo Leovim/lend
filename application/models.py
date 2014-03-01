@@ -61,6 +61,11 @@ class UserModel():
         up_user.avatar = user['avatar']
         session.commit()
 
+    def update_user_credit(self, user_id, credit):
+        user = session.query(User).filter(User.user_id==user_id).one()
+        user.credit = int(credit)
+        session.commit()
+
 
 class GuaranteeModel():
     def add_guarantee(self, guarantee):
