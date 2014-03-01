@@ -104,17 +104,17 @@ class LoanModel():
 
     def change_due_status(self, loan_id, status):
         loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
-        loan.due_status = status
+        loan.due_status = int(status)
         session.commit()
 
     def change_split_status(self, loan_id, status):
         loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
-        loan.split_status = status
+        loan.split_status = int(status)
         session.commit()
 
     def change_check_status(self, loan_id, status):
         loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
-        loan.check_status = status
+        loan.check_status = int(status)
         session.commit()
 
 
