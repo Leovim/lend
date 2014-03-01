@@ -64,30 +64,58 @@ class UserModel():
 
 class GuaranteeModel():
     def add_guarantee(self, guarantee):
-        pass
-    
+        new_guarantee = Guarantee(guarantor_id=guarantee['guarantor_id'],
+                                  warrantee_id=guarantee['warrantee_id'],
+                                  status=0)
+        session.add(new_guarantee)
+        session.commit()
+
     def delete_guarantee(self, guarantee_id):
-        pass
-    
-    def change_check(self, guarantee_id):
-        pass
+        guarantee = session.query(Guarantee).\
+            filter(Guarantee.guarantee_id==guarantee_id).one()
+        session.delete(guarantee)
+        session.commit()
+
+    def change_status(self, guarantee_id):
+        guarantee = session.query(Guarantee). \
+            filter(Guarantee.guarantee_id==guarantee_id).one()
+        if guarantee.status == 0:
+            guarantee.status = 1
+        session.commit()
 
 
 class LoanModel():
     def add_loan(self, loan):
-        pass
-    
+        new_loan = Loan(user_id=loan['user_id'],
+                        loan_amount=loan['loan_amount'],
+                        remain_amount=loan['remain_amount'],
+                        loan_date=loan['loan_date'],
+                        due_date=loan['due_date'],
+                        split_status=loan['split_status'],
+                        due_status=loan['due_status'],
+                        check_status=0)
+        session.add(new_loan)
+        session.commit()
+
     def delete_loan(self, loan_id):
-        pass
-    
+        loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
+        session.delete(loan)
+        session.commit()
+
     def change_due_status(self, loan_id, status):
-        pass
+        loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
+        loan.due_status = status
+        session.commit()
 
     def change_split_status(self, loan_id, status):
-        pass
-    
+        loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
+        loan.split_status = status
+        session.commit()
+
     def change_check_status(self, loan_id, status):
-        pass
+        loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
+        loan.check_status = status
+        session.commit()
 
 
 class BehaviourModel():
