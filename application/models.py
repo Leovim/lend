@@ -120,10 +120,22 @@ class LoanModel():
 
 class BehaviourModel():
     def add_behaviour(self, behaviour):
-        pass
-    
+        new_behaviour = Behaviour(loan_id=behaviour['loan_id'],
+                                  type=behaviour['type'],
+                                  money=behaviour['money'],
+                                  time=behaviour['time'],
+                                  check_status=behaviour['check_status'])
+        session.add(new_behaviour)
+        session.commit()
+
     def delete_behaviour(self, behaviour_id):
-        pass
-    
+        behaviour = session.query(Behaviour).\
+            filter(Behaviour.behaviour_id==behaviour_id).one()
+        session.delete(behaviour)
+        session.commit()
+
     def change_status(self, behaviour_id, status):
-        pass
+        behaviour = session.query(Behaviour). \
+            filter(Behaviour.behaviour_id==behaviour_id).one()
+        behaviour.check_status = int(status)
+        session.commit()
