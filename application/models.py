@@ -107,6 +107,11 @@ class LoanModel():
         session.delete(loan)
         session.commit()
 
+    def update_remain_amount(self, loan_id, remain_amount):
+        loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
+        loan.remain_amount = int(remain_amount)
+        session.commit()
+
     def change_due_status(self, loan_id, status):
         loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
         loan.due_status = int(status)
