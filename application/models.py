@@ -170,3 +170,12 @@ class BehaviourModel():
             filter(Behaviour.behaviour_id==behaviour_id).one()
         behaviour.check_status = int(status)
         session.commit()
+        
+    def get_user_all_behaviours(self, user_id):
+        pass
+    
+    def get_user_new_ten_behaviours(self, user_id):
+        pass
+    
+    def get_all_unchecked_behaviours(self):
+        pass
