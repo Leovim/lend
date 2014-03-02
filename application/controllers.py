@@ -57,9 +57,27 @@ class RegisterHandler(BaseHandler):
         sha.update(password)
         sha_password = sha.hexdigest()
 
+        # check if username exist
+        # check if phone exist
+
         user = dict(
             username=self.get_argument('username', None),
             password=sha_password,
             phone=self.get_argument('phone', None)
         )
         self.user_model.add_user(user)
+        
+
+class LoanRequestHandler(BaseHandler):
+    def post(self):
+        pass
+
+
+class DueRequestHandler(BaseHandler):
+    def post(self):
+        pass
+
+
+class SplitRequestHandler(BaseHandler):
+    def post(self):
+        pass
