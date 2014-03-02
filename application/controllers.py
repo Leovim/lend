@@ -13,7 +13,7 @@ class BaseHandler(tornado.web.RequestHandler):
     behaviour_model = BehaviourModel()
 
 
-class IndexHandler(tornado.web.RequestHandler):
+class IndexHandler(BaseHandler):
     def get(self, arg):
         result_json = json.dumps([arg, {'name': "Leo中文", 'age': 20},
                                   {'name': "Smith", 'age': 17}],
@@ -22,7 +22,7 @@ class IndexHandler(tornado.web.RequestHandler):
         self.render("index.html", title="Lend", result_json=result_json)
 
 
-class LoanHandler(tornado.web.RequestHandler):
+class LoanHandler(BaseHandler):
     def get(self, user_id=None):
         # user_id = 1
         user_id = user_id.__str__()
@@ -30,7 +30,7 @@ class LoanHandler(tornado.web.RequestHandler):
             raise tornado.web.HTTPError(404)
 
 
-class HistoryHandler(tornado.web.RequestHandler):
+class HistoryHandler(BaseHandler):
     def get(self, user_id=None):
         user_id = user_id.__str__()
         if not user_id:
@@ -39,7 +39,7 @@ class HistoryHandler(tornado.web.RequestHandler):
             raise tornado.web.HTTPError(404)
 
 
-class LoginHandler(tornado.web.RequestHandler):
+class LoginHandler(BaseHandler):
     def post(self):
         username = self.get_argument("username", None)
         password = self.get_argument("password", None)
