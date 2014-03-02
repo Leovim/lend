@@ -66,6 +66,12 @@ class UserModel():
         user.credit = int(credit)
         session.commit()
 
+    def get_user_info(self, user_id):
+        pass
+
+    def get_user_id(self, username):
+        pass
+
 
 class GuaranteeModel():
     def add_guarantee(self, guarantee):
@@ -87,6 +93,12 @@ class GuaranteeModel():
         if guarantee.status == 0:
             guarantee.status = 1
         session.commit()
+
+    def get_user_guarantor(self, user_id):
+        pass
+
+    def get_user_warrantee(self, user_id):
+        pass
 
 
 class LoanModel():
