@@ -139,6 +139,15 @@ class LoanModel():
         loan.check_status = int(status)
         session.commit()
 
+    def get_user_all_loans(self, user_id):
+        pass
+
+    def get_user_new_three_loans(self, user_id):
+        pass
+
+    def get_all_unchecked_loans(self):
+        pass
+
 
 class BehaviourModel():
     def add_behaviour(self, behaviour):
