@@ -74,10 +74,10 @@ class LoanRequestHandler(BaseHandler):
 
 
 class DueRequestHandler(BaseHandler):
-    def post(self):
+    def get(self):
         pass
 
 
 class SplitRequestHandler(BaseHandler):
-    def post(self):
+    def get(self):
         pass
