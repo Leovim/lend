@@ -12,6 +12,12 @@ class BaseHandler(tornado.web.RequestHandler):
     loan_model = LoanModel()
     behaviour_model = BehaviourModel()
 
+    def get_current_user(self):
+        user_id = self.get_secure_cookie("user_id")
+        if not user_id:
+            return None
+        return self.user_model.get_user_info(user_id)
+
 
 class IndexHandler(BaseHandler):
     def get(self, arg):
@@ -48,6 +54,11 @@ class LoginHandler(BaseHandler):
         result_json = json.dumps([], separators=(',', ':'), indent=4,
                                    encoding="utf-8", ensure_ascii=False)
         self.render("index.html", title="Lend", result_json=result_json)
+
+
+class LogoutHandler(BaseHandler):
+    def get(self):
+        pass
 
 
 class RegisterHandler(BaseHandler):
