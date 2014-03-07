@@ -34,6 +34,12 @@ class LoanHandler(BaseHandler):
         user_id = user_id.__str__()
         if not user_id:
             raise tornado.web.HTTPError(404)
+        else:
+            result = self.loan_model.get_user_new_three_loans(user_id)
+            result_json = json.dumps(result, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
 
 
 class HistoryHandler(BaseHandler):
@@ -42,7 +48,11 @@ class HistoryHandler(BaseHandler):
         if not user_id:
             raise tornado.web.HTTPError(404)
         else:
-            raise tornado.web.HTTPError(404)
+            result = self.behaviour_model.get_user_new_ten_behaviours(user_id)
+            result_json = json.dumps(result, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
 
 
 class LoginHandler(BaseHandler):
