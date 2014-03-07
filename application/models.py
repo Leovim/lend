@@ -160,13 +160,30 @@ class LoanModel(BaseModel):
         session.commit()
 
     def get_user_all_loans(self, user_id):
-        pass
+        loans = session.query(Loan).filter(Loan.user_id==user_id).all()
+        if loans.__len__() == 1:
+            return loans[0].as_dict()
+        else:
+            return self.change_list(loans)
 
     def get_user_new_three_loans(self, user_id):
-        pass
+        # order_by 默认升序 可使用order_by(Loan.loan_id.desc())显示降序结果
+        # 可能不够3个，需要做处理
+        loans = session.query(Loan).filter(Loan.user_id==user_id).\
+            order_by(Loan.user_id.desc()).all()
+        if loans.__len__() == 1:
+            return loans[0].as_dict()
+        elif loans.__len__() == 2:
+            return self.change_list(loans)
+        else:
+            return self.change_list(loans[0:3])
 
     def get_all_unchecked_loans(self):
-        pass
+        loans = session.query(Loan).filter(Loan.check_status==0).all()
+        if loans.__len__() == 1:
+            return loans[0].as_dict()
+        else:
+            return self.change_list(loans)
 
 
 class BehaviourModel(BaseModel):
