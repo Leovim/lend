@@ -188,7 +188,8 @@ class LoanModel(BaseModel):
 
 class BehaviourModel(BaseModel):
     def add_behaviour(self, behaviour):
-        new_behaviour = Behaviour(loan_id=behaviour['loan_id'],
+        new_behaviour = Behaviour(user_id=behaviour['user_id'],
+                                  loan_id=behaviour['loan_id'],
                                   type=behaviour['type'],
                                   money=behaviour['money'],
                                   time=behaviour['time'],
