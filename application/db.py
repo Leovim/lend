@@ -103,13 +103,15 @@ class Behaviour(Base):
     __tablename__ = 'behaviour'
 
     behaviour_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('loan.user_id'))
     loan_id = Column(Integer, ForeignKey('loan.loan_id'))
     type = Column(Integer)
     money = Column(Integer)
     time = Column(String(20))
     check_status = Column(Integer)
 
-    def __init__(self, loan_id, type, money, time, check_status):
+    def __init__(self, user_id, loan_id, type, money, time, check_status):
+        self.user_id = int(user_id)
         self.loan_id = int(loan_id)
         self.type = int(type)
         self.money = int(money)
@@ -117,8 +119,8 @@ class Behaviour(Base):
         self.check_status = int(check_status)
 
     def __repr__(self):
-        return "<Behaviour('%s', '%s', '%s', '%s', '%s', '%s')>" % \
-               (self.behaviour_id, self.loan_id, self.type, self.money,
+        return "<Behaviour('%s', '%s', '%s', '%s', '%s', '%s', '%s')>" % \
+               (self.behaviour_id, self.user_id, self.loan_id, self.type, self.money,
                 self.time, self.check_status)
 
     def as_dict(self):
