@@ -39,6 +39,9 @@ class User(Base):
                 self.phone, self.real_name, self.bank_number,
                 self.alipay_number, self.credit, self.avatar)
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Guarantee(Base):
     __tablename__ = 'guarantee'
@@ -57,6 +60,9 @@ class Guarantee(Base):
         return  "<Guarantee('%s', '%s', '%s')>" % (self.guarantor_id,
                                                    self.warrantee_id,
                                                    self.status)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class Loan(Base):
@@ -89,6 +95,9 @@ class Loan(Base):
                 self.remain_amount, self.loan_date, self.due_date,
                 self.split_status, self.due_status, self.check_status)
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Behaviour(Base):
     __tablename__ = 'behaviour'
@@ -111,3 +120,6 @@ class Behaviour(Base):
         return "<Behaviour('%s', '%s', '%s', '%s', '%s', '%s')>" % \
                (self.behaviour_id, self.loan_id, self.type, self.money,
                 self.time, self.check_status)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
