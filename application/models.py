@@ -6,8 +6,16 @@ from db import *
 Session = sessionmaker(bind=engine)
 session = Session()
 
+class BaseModel():
+    def change_list(self, result_list):
+        i = 0
+        while i < result_list.__len__():
+            result_list[i] = result_list[i].as_dict()
+            i += 1
+        return result_list
 
-class UserModel():
+
+class UserModel(BaseModel):
     def add_user(self, user):
         new_user = User(username=user['username'],
                         password=user['password'],
@@ -68,14 +76,14 @@ class UserModel():
 
     def get_user_info(self, user_id):
         user = session.query(User).filter(User.user_id==user_id).one()
-        return user
+        return user.as_dict()
 
     def get_user_id(self, username):
         user = session.query(User).filter(User.username==username).one()
         return int(user.user_id)
 
 
-class GuaranteeModel():
+class GuaranteeModel(BaseModel):
     def add_guarantee(self, guarantee):
         new_guarantee = Guarantee(guarantor_id=guarantee['guarantor_id'],
                                   warrantee_id=guarantee['warrantee_id'],
@@ -97,13 +105,23 @@ class GuaranteeModel():
         session.commit()
 
     def get_user_guarantor(self, user_id):
-        pass
+        guarantor = session.query(Guarantee).\
+            filter(Guarantee.warrantee_id==int(user_id)).all()
+        if guarantor.__len__() == 1:
+            return guarantor[0].as_dict()
+        else:
+            return self.change_list(guarantor)
 
     def get_user_warrantee(self, user_id):
-        pass
+        warrantee = session.query(Guarantee). \
+            filter(Guarantee.guarantor_id==int(user_id)).all()
+        if warrantee.__len__() == 1:
+            return warrantee[0].as_dict()
+        else:
+            return self.change_list(warrantee)
 
 
-class LoanModel():
+class LoanModel(BaseModel):
     def add_loan(self, loan):
         new_loan = Loan(user_id=loan['user_id'],
                         loan_amount=loan['loan_amount'],
@@ -151,7 +169,7 @@ class LoanModel():
         pass
 
 
-class BehaviourModel():
+class BehaviourModel(BaseModel):
     def add_behaviour(self, behaviour):
         new_behaviour = Behaviour(loan_id=behaviour['loan_id'],
                                   type=behaviour['type'],
