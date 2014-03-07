@@ -210,10 +210,28 @@ class BehaviourModel(BaseModel):
         session.commit()
         
     def get_user_all_behaviours(self, user_id):
-        pass
-    
+        behaviours = session.query(Behaviour).filter(Behaviour.user_id==user_id)\
+            .order_by(Behaviour.behaviour_id.desc()).all()
+        if behaviours.__len__() == 1:
+            return behaviours[0].as_dict()
+        else:
+            return self.change_list(behaviours)
+
     def get_user_new_ten_behaviours(self, user_id):
+        behaviours = session.query(Behaviour).filter(Behaviour.user_id==user_id). \
+            order_by(Behaviour.behaviour_id.desc()).all()
+        if behaviours.__len__() == 1:
+            return behaviours[0].as_dict()
+        elif behaviours.__len__() < 10:
+            return self.change_list(behaviours)
+        else:
+            return self.change_list(behaviours[0:10])
         pass
     
     def get_all_unchecked_behaviours(self):
-        pass
+        behaviours = session.query(Behaviour).filter(Behaviour.check_status==0)\
+            .all()
+        if behaviours.__len__() == 1:
+            return behaviours[0].as_dict()
+        else:
+            return self.change_list(behaviours)
