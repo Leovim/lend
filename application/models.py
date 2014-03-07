@@ -67,10 +67,12 @@ class UserModel():
         session.commit()
 
     def get_user_info(self, user_id):
-        pass
+        user = session.query(User).filter(User.user_id==user_id).one()
+        return user
 
     def get_user_id(self, username):
-        pass
+        user = session.query(User).filter(User.username==username).one()
+        return int(user.user_id)
 
 
 class GuaranteeModel():
