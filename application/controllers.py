@@ -59,11 +59,36 @@ class LoginHandler(BaseHandler):
     def post(self):
         username = self.get_argument("username", None)
         password = self.get_argument("password", None)
-        # username = "sdlu"
-        # password = "123456"
-        result_json = json.dumps([], separators=(',', ':'), indent=4,
-                                   encoding="utf-8", ensure_ascii=False)
-        self.render("index.html", title="Lend", result_json=result_json)
+
+        user_id = self.user_model.check_username_exist(username)
+        if user_id:
+            user_info = self.user_model.get_user_info(user_id)
+            # password hash
+            sha = hashlib.sha1()
+            sha.update(password)
+            sha_password = sha.hexdigest()
+            if user_info['password'] == sha_password:
+                histories = self.behaviour_model.get_user_new_ten_behaviours(user_id)
+                loans = self.loan_model.get_user_new_three_loans(user_id)
+                # success
+                result_json = json.dumps({'result': 1,
+                                          'user': user_info,
+                                          'loans': loans,
+                                          'histories': histories},
+                                         separators=(',', ':'), indent=4,
+                                         encoding="utf-8", ensure_ascii=False)
+                self.render("index.html", title="Lend", result_json=result_json)
+            else:
+                # wrong password
+                result_json = json.dumps({'result': 2}, separators=(',', ':'), indent=4,
+                                         encoding="utf-8", ensure_ascii=False)
+                self.render("index.html", title="Lend", result_json=result_json)
+        else:
+            # username not exist
+            result_json = json.dumps({'result': 0}, separators=(',', ':'), indent=4,
+                                       encoding="utf-8", ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+
 
 
 class LogoutHandler(BaseHandler):
