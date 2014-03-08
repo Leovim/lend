@@ -88,6 +88,13 @@ class UserModel(BaseModel):
         except NoResultFound:
             return False
         return int(user.user_id)
+    
+    def check_phone_exist(self, phone):
+        try:
+            user = session.query(User).filter(User.phone==phone).one()
+        except NoResultFound:
+            return False
+        return True
 
 
 class GuaranteeModel(BaseModel):
