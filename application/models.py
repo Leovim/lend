@@ -1,6 +1,7 @@
 #coding=utf8
 
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import *
 from db import *
 
 Session = sessionmaker(bind=engine)
@@ -75,11 +76,17 @@ class UserModel(BaseModel):
         session.commit()
 
     def get_user_info(self, user_id):
-        user = session.query(User).filter(User.user_id==user_id).one()
+        try:
+            user = session.query(User).filter(User.user_id==user_id).one()
+        except NoResultFound:
+            return False
         return user.as_dict()
 
     def get_user_id(self, username):
-        user = session.query(User).filter(User.username==username).one()
+        try:
+            user = session.query(User).filter(User.username==username).one()
+        except NoResultFound:
+            return False
         return int(user.user_id)
 
 
@@ -105,16 +112,24 @@ class GuaranteeModel(BaseModel):
         session.commit()
 
     def get_user_guarantor(self, user_id):
-        guarantor = session.query(Guarantee).\
-            filter(Guarantee.warrantee_id==int(user_id)).all()
+        try:
+            guarantor = session.query(Guarantee).\
+                filter(Guarantee.warrantee_id==int(user_id)).all()
+        except NoResultFound:
+            return False
+
         if guarantor.__len__() == 1:
             return guarantor[0].as_dict()
         else:
             return self.change_list(guarantor)
 
     def get_user_warrantee(self, user_id):
-        warrantee = session.query(Guarantee). \
-            filter(Guarantee.guarantor_id==int(user_id)).all()
+        try:
+            warrantee = session.query(Guarantee). \
+                filter(Guarantee.guarantor_id==int(user_id)).all()
+        except NoResultFound:
+            return False
+
         if warrantee.__len__() == 1:
             return warrantee[0].as_dict()
         else:
@@ -160,7 +175,11 @@ class LoanModel(BaseModel):
         session.commit()
 
     def get_user_all_loans(self, user_id):
-        loans = session.query(Loan).filter(Loan.user_id==user_id).all()
+        try:
+            loans = session.query(Loan).filter(Loan.user_id==user_id).all()
+        except NoResultFound:
+            return False
+
         if loans.__len__() == 1:
             return loans[0].as_dict()
         else:
@@ -169,8 +188,12 @@ class LoanModel(BaseModel):
     def get_user_new_three_loans(self, user_id):
         # order_by 默认升序 可使用order_by(Loan.loan_id.desc())显示降序结果
         # 可能不够3个，需要做处理
-        loans = session.query(Loan).filter(Loan.user_id==user_id).\
-            order_by(Loan.user_id.desc()).all()
+        try:
+            loans = session.query(Loan).filter(Loan.user_id==user_id). \
+                order_by(Loan.user_id.desc()).all()
+        except NoResultFound:
+            return False
+
         if loans.__len__() == 1:
             return loans[0].as_dict()
         elif loans.__len__() == 2:
@@ -179,7 +202,11 @@ class LoanModel(BaseModel):
             return self.change_list(loans[0:3])
 
     def get_all_unchecked_loans(self):
-        loans = session.query(Loan).filter(Loan.check_status==0).all()
+        try:
+            loans = session.query(Loan).filter(Loan.check_status==0).all()
+        except NoResultFound:
+            return False
+
         if loans.__len__() == 1:
             return loans[0].as_dict()
         else:
@@ -210,16 +237,26 @@ class BehaviourModel(BaseModel):
         session.commit()
         
     def get_user_all_behaviours(self, user_id):
-        behaviours = session.query(Behaviour).filter(Behaviour.user_id==user_id)\
-            .order_by(Behaviour.behaviour_id.desc()).all()
+        try:
+            behaviours = session.query(Behaviour).\
+                filter(Behaviour.user_id==user_id).\
+                order_by(Behaviour.behaviour_id.desc()).all()
+        except NoResultFound:
+            return False
+
         if behaviours.__len__() == 1:
             return behaviours[0].as_dict()
         else:
             return self.change_list(behaviours)
 
     def get_user_new_ten_behaviours(self, user_id):
-        behaviours = session.query(Behaviour).filter(Behaviour.user_id==user_id). \
-            order_by(Behaviour.behaviour_id.desc()).all()
+        try:
+            behaviours = session.query(Behaviour).\
+                filter(Behaviour.user_id==user_id).\
+                order_by(Behaviour.behaviour_id.desc()).all()
+        except NoResultFound:
+            return False
+
         if behaviours.__len__() == 1:
             return behaviours[0].as_dict()
         elif behaviours.__len__() < 10:
@@ -229,8 +266,12 @@ class BehaviourModel(BaseModel):
         pass
     
     def get_all_unchecked_behaviours(self):
-        behaviours = session.query(Behaviour).filter(Behaviour.check_status==0)\
-            .all()
+        try:
+            behaviours = session.query(Behaviour).\
+                filter(Behaviour.check_status==0).all()
+        except NoResultFound:
+            return False
+
         if behaviours.__len__() == 1:
             return behaviours[0].as_dict()
         else:
