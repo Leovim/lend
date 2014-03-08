@@ -73,21 +73,49 @@ class LogoutHandler(BaseHandler):
 
 class RegisterHandler(BaseHandler):
     def post(self):
+        phone = self.get_argument('phone', None)
+        username = self.get_argument('username', None),
         password = self.get_argument('password', None)
+
+        # password hash
         sha = hashlib.sha1()
         sha.update(password)
         sha_password = sha.hexdigest()
 
-        # check if username exist
-        # check if phone exist
+        # return 1: success
+        # return 2: username exist
+        # return 3: phone exist
+        # return 4: unknown error
 
-        user = dict(
-            username=self.get_argument('username', None),
-            password=sha_password,
-            phone=self.get_argument('phone', None)
-        )
-        self.user_model.add_user(user)
-        
+        # check if username exist
+        if self.user_model.check_username_exist(username):
+            result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+        # check if phone exist
+        elif self.user_model.check_phone_exist(phone):
+            result_json = json.dumps({'result': 3}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+        else:
+            user = dict(
+                username=username,
+                password=sha_password,
+                phone=phone
+            )
+            if self.user_model.add_user(user):
+                result_json = json.dumps({'result': 1}, separators=(',', ':'),
+                                         encoding="utf-8", indent=4,
+                                         ensure_ascii=False)
+                self.render("index.html", title="Lend", result_json=result_json)
+            else:
+                result_json = json.dumps({'result': 4}, separators=(',', ':'),
+                                         encoding="utf-8", indent=4,
+                                         ensure_ascii=False)
+                self.render("index.html", title="Lend", result_json=result_json)
+
 
 class LoanRequestHandler(BaseHandler):
     def post(self):
