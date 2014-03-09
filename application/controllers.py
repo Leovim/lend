@@ -13,10 +13,10 @@ class BaseHandler(tornado.web.RequestHandler):
     behaviour_model = BehaviourModel()
 
     def get_current_user(self):
-        user_id = self.get_secure_cookie("user_id")
+        user_id = self.get_secure_cookie("user")
         if not user_id:
             return None
-        return self.user_model.get_user_info(user_id)
+        return self.user_model.get_user_info(int(user_id))
 
 
 class IndexHandler(BaseHandler):
@@ -29,13 +29,13 @@ class IndexHandler(BaseHandler):
 
 
 class LoanHandler(BaseHandler):
-    def get(self, user_id=None):
+    def get(self):
         # user_id = 1
-        user_id = user_id.__str__()
-        if not user_id:
+        user = self.get_current_user()
+        if not user:
             raise tornado.web.HTTPError(404)
         else:
-            result = self.loan_model.get_user_new_three_loans(user_id)
+            result = self.loan_model.get_user_new_three_loans(user['user_id'])
             result_json = json.dumps(result, separators=(',', ':'),
                                      encoding="utf-8", indent=4,
                                      ensure_ascii=False)
@@ -43,12 +43,12 @@ class LoanHandler(BaseHandler):
 
 
 class HistoryHandler(BaseHandler):
-    def get(self, user_id=None):
-        user_id = user_id.__str__()
-        if not user_id:
+    def get(self):
+        user = self.get_current_user()
+        if not user:
             raise tornado.web.HTTPError(404)
         else:
-            result = self.behaviour_model.get_user_new_ten_behaviours(user_id)
+            result = self.behaviour_model.get_user_new_ten_behaviours(user['user_id'])
             result_json = json.dumps(result, separators=(',', ':'),
                                      encoding="utf-8", indent=4,
                                      ensure_ascii=False)
@@ -71,6 +71,7 @@ class LoginHandler(BaseHandler):
                 histories = self.behaviour_model.get_user_new_ten_behaviours(user_id)
                 loans = self.loan_model.get_user_new_three_loans(user_id)
                 # success
+                self.set_secure_cookie("user", str(user_id))
                 result_json = json.dumps({'result': 1,
                                           'user': user_info,
                                           'loans': loans,
@@ -90,10 +91,9 @@ class LoginHandler(BaseHandler):
             self.render("index.html", title="Lend", result_json=result_json)
 
 
-
 class LogoutHandler(BaseHandler):
     def get(self):
-        pass
+        self.clear_cookie('user')
 
 
 class RegisterHandler(BaseHandler):
