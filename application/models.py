@@ -243,7 +243,7 @@ class LoanModel(BaseModel):
             return 600
         return int(count)
 
-    def check_total_loan_money(self, user_id):
+    def check_total_loan_money(self, user_id, loan_amount):
         # return true 已超额
         # return false 未超额
         try:
@@ -256,7 +256,12 @@ class LoanModel(BaseModel):
         for item in loans:
             total_loan_money += item.loan_amount
 
-        return total_loan_money
+        total_loan_money += loan_amount
+        loan_limit = self.get_loan_limit(user_id)
+        if total_loan_money <= loan_limit:
+            return True
+        else:
+            return False
 
 
 class BehaviourModel(BaseModel):
