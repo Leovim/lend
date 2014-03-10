@@ -23,7 +23,7 @@ class UserModel(BaseModel):
                         phone=user['phone'])
         session.add(new_user)
         session.commit()
-        
+
     def delete_user(self, user_id):
         user = session.query(User).filter(User.user_id == user_id)
         session.delete(user)
@@ -101,6 +101,8 @@ class UserModel(BaseModel):
             session.query(User).filter(User.phone==phone).one()
         except NoResultFound:
             return False
+        except MultipleResultsFound:
+            return True
         return True
 
 

@@ -135,16 +135,11 @@ class RegisterHandler(BaseHandler):
                 password=sha_password,
                 phone=phone
             )
-            if self.user_model.add_user(user):
-                result_json = json.dumps({'result': 1}, separators=(',', ':'),
-                                         encoding="utf-8", indent=4,
-                                         ensure_ascii=False)
-                self.render("index.html", title="Lend", result_json=result_json)
-            else:
-                result_json = json.dumps({'result': 4}, separators=(',', ':'),
-                                         encoding="utf-8", indent=4,
-                                         ensure_ascii=False)
-                self.render("index.html", title="Lend", result_json=result_json)
+            self.user_model.add_user(user)
+            result_json = json.dumps({'result': 1}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
 
 
 class LoanRequestHandler(BaseHandler):
