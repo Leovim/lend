@@ -119,10 +119,10 @@ class GuaranteeModel(BaseModel):
         session.commit()
 
     def change_status(self, guarantee_id):
+        # 审核完成
         guarantee = session.query(Guarantee). \
             filter(Guarantee.guarantee_id==guarantee_id).one()
-        if guarantee.status == 0:
-            guarantee.status = 1
+        guarantee.status = 1
         session.commit()
 
     def get_user_guarantor(self, user_id):
@@ -240,8 +240,13 @@ class LoanModel(BaseModel):
             count = session.query(Guarantee).\
                 filter(Guarantee.guarantor_id==user_id).count()
         except NoResultFound:
-            return 600
-        return int(count)
+            return 300
+        if count == 0:
+            return 300
+        elif count == 1:
+            return 700
+        elif count == 2:
+            return 1200
 
     def check_total_loan_money(self, user_id, loan_amount):
         # return true 已超额
