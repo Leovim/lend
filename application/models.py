@@ -179,11 +179,18 @@ class LoanModel(BaseModel):
         session.commit()
 
     def change_split_status(self, loan_id, status):
+        # status: 0 未分期
+        #         1 分期一次
+        #         2 两次
+        #         3 三次
         loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
         loan.split_status = int(status)
         session.commit()
 
     def change_check_status(self, loan_id, status):
+        # status: 0 wait to check
+        #         1 ing
+        #         2 complete
         loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
         loan.check_status = int(status)
         session.commit()
@@ -225,6 +232,21 @@ class LoanModel(BaseModel):
             return loans[0].as_dict()
         else:
             return self.change_list(loans)
+
+    def check_total_loan_money(self, user_id):
+        # return true 已超额
+        # return false 未超额
+        try:
+            loans = session.query(Loan).filter(Loan.user_id==user_id).\
+                filter(Loan.check_status.in_([0, 1])).all()
+        except NoResultFound:
+            return False
+
+        total_loan_money = 0
+        for item in loans:
+            total_loan_money += item.loan_amount
+
+        return total_loan_money
 
 
 class BehaviourModel(BaseModel):
