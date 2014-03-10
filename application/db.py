@@ -96,7 +96,10 @@ class Loan(Base):
                 self.split_status, self.due_status, self.check_status)
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        c = dict()
+        for c in self.__table__.columns:
+            c[c.name] = getattr(self, c.name)
+        return c
 
 
 class Behaviour(Base):
