@@ -2,7 +2,7 @@
 
 import json
 import hashlib
-import datetime
+# import datetime
 import tornado.web
 from models import *
 
@@ -161,6 +161,19 @@ class DueRequestHandler(BaseHandler):
 
 
 class SplitRequestHandler(BaseHandler):
-    def get(self):
+    def post(self):
         loan_id = self.get_argument("loan_id", None)
         pass
+
+
+class GuaranteeHandler(BaseHandler):
+    def get(self):
+        user = self.get_current_user()
+        if user:
+            guarantor = self.guarantee_model.get_user_guarantor(user['user_id'])
+            warrantee = self.guarantee_model.get_user_warrantee(user['user_id'])
+            result_json = json.dumps({'result': 1, 'guarantor': guarantor,
+                                      'warrantee': warrantee}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
