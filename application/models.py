@@ -126,6 +126,7 @@ class GuaranteeModel(BaseModel):
         session.commit()
 
     def get_user_guarantor(self, user_id):
+        # 担保人
         try:
             guarantor = session.query(Guarantee).\
                 filter(Guarantee.warrantee_id==int(user_id)).all()
@@ -138,6 +139,7 @@ class GuaranteeModel(BaseModel):
             return self.change_list(guarantor)
 
     def get_user_warrantee(self, user_id):
+        # 被担保人
         try:
             warrantee = session.query(Guarantee). \
                 filter(Guarantee.guarantor_id==int(user_id)).all()
@@ -232,6 +234,14 @@ class LoanModel(BaseModel):
             return loans[0].as_dict()
         else:
             return self.change_list(loans)
+
+    def get_loan_limit(self, user_id):
+        try:
+            count = session.query(Guarantee).\
+                filter(Guarantee.guarantor_id==user_id).count()
+        except NoResultFound:
+            return 600
+        return int(count)
 
     def check_total_loan_money(self, user_id):
         # return true 已超额
