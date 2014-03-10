@@ -40,7 +40,10 @@ class User(Base):
                 self.alipay_number, self.credit, self.avatar)
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        c = dict()
+        for c in self.__table__.columns:
+            c[c.name] = getattr(self, c.name)
+        return c
 
 
 class Guarantee(Base):
@@ -62,7 +65,10 @@ class Guarantee(Base):
                                                    self.status)
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        c = dict()
+        for c in self.__table__.columns:
+            c[c.name] = getattr(self, c.name)
+        return c
 
 
 class Loan(Base):
@@ -127,4 +133,7 @@ class Behaviour(Base):
                 self.time, self.check_status)
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        c = dict()
+        for c in self.__table__.columns:
+            c[c.name] = getattr(self, c.name)
+        return c
