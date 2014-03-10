@@ -2,7 +2,7 @@
 
 import json
 import hashlib
-# import datetime
+import datetime
 import tornado.web
 from models import *
 
@@ -17,6 +17,11 @@ class BaseHandler(tornado.web.RequestHandler):
         if not user_id:
             return None
         return self.user_model.get_user_info(int(user_id))
+    
+    def calc_interest(self, principal, rate, time):
+        # time: week number
+        # rate: 22.2% = 0.222
+        return principal * rate * time / 52
 
 
 class IndexHandler(BaseHandler):
@@ -148,10 +153,14 @@ class LoanRequestHandler(BaseHandler):
 
 
 class DueRequestHandler(BaseHandler):
-    def get(self):
-        pass
+    def post(self):
+        user = self.get_current_user()
+        if user:
+            loan_id = self.get_argument("loan_id", None)
+            due_time = self.get_argument("due_time", None)
 
 
 class SplitRequestHandler(BaseHandler):
     def get(self):
+        loan_id = self.get_argument("loan_id", None)
         pass
