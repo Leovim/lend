@@ -66,8 +66,8 @@ class Guarantee(Base):
 
     def as_dict(self):
         c = dict()
-        for c in self.__table__.columns:
-            c[c.name] = getattr(self, c.name)
+        for item in self.__table__.columns:
+            c[item.name] = getattr(self, item.name)
         return c
 
 
@@ -104,7 +104,7 @@ class Loan(Base):
     def as_dict(self):
         c = dict()
         for c in self.__table__.columns:
-            c[c.name] = getattr(self, c.name)
+            c[item.name] = getattr(self, item.name)
         return c
 
 
@@ -134,6 +134,6 @@ class Behaviour(Base):
 
     def as_dict(self):
         c = dict()
-        for c in self.__table__.columns:
-            c[c.name] = getattr(self, c.name)
+        for item in self.__table__.columns:
+            c[item.name] = getattr(self, item.name)
         return c
