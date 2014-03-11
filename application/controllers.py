@@ -38,10 +38,14 @@ class LoanHandler(BaseHandler):
         # user_id = 1
         user = self.get_current_user()
         if not user:
-            raise tornado.web.HTTPError(404)
+            #raise tornado.web.HTTPError(404)
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
         else:
             result = self.loan_model.get_user_new_three_loans(user['user_id'])
-            result_json = json.dumps(result, separators=(',', ':'),
+            result_json = json.dumps({'result': 1, 'loan': result}, separators=(',', ':'),
                                      encoding="utf-8", indent=4,
                                      ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
@@ -51,10 +55,14 @@ class HistoryHandler(BaseHandler):
     def get(self):
         user = self.get_current_user()
         if not user:
-            raise tornado.web.HTTPError(404)
+            # raise tornado.web.HTTPError(404)
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
         else:
             result = self.behaviour_model.get_user_new_ten_behaviours(user['user_id'])
-            result_json = json.dumps(result, separators=(',', ':'),
+            result_json = json.dumps({'result': 1, 'history': result}, separators=(',', ':'),
                                      encoding="utf-8", indent=4,
                                      ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
