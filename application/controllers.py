@@ -77,6 +77,7 @@ class LoginHandler(BaseHandler):
                 loans = self.loan_model.get_user_new_three_loans(user_id)
                 # success
                 self.set_secure_cookie("user", str(user_id))
+                del user_info['password']
                 result_json = json.dumps({'result': 1,
                                           'user': user_info,
                                           'loans': loans,
