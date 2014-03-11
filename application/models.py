@@ -91,10 +91,10 @@ class UserModel(BaseModel):
 
     def check_username_exist(self, username):
         try:
-            session.query(User).filter(User.username==username).one()
+            user = session.query(User).filter(User.username==username).one()
         except NoResultFound:
             return False
-        return True
+        return user.user_id
 
     def check_phone_exist(self, phone):
         try:
