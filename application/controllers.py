@@ -175,7 +175,13 @@ class SplitRequestHandler(BaseHandler):
 class GuaranteeHandler(BaseHandler):
     def get(self):
         user = self.get_current_user()
-        if user:
+        if not user:
+            # raise tornado.web.HTTPError(404)
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+        else:
             guarantor = self.guarantee_model.get_user_guarantor(user['user_id'])
             warrantee = self.guarantee_model.get_user_warrantee(user['user_id'])
             result_json = json.dumps({'result': 1, 'guarantor': guarantor,
