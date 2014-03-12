@@ -130,28 +130,70 @@ class GuaranteeModel(BaseModel):
     def get_user_guarantor(self, user_id):
         # 担保人
         try:
-            guarantor = session.query(Guarantee).\
+            g = session.query(Guarantee).\
                 filter(Guarantee.warrantee_id==int(user_id)).all()
         except NoResultFound:
             return False
 
-        if guarantor.__len__() == 1:
-            return guarantor[0].as_dict()
+        if g.__len__() == 1:
+            try:
+                ga = session.query(User).\
+                    filter(User.user_id==g[0].guarantor_id).one()
+            except NoResultFound:
+                return []
+            guarantor = dict(
+                user_id=ga.user_id,
+                real_name=ga.real_name
+            )
+            return guarantor
         else:
-            return self.change_list(guarantor)
+            a = []
+            for item in g:
+                try:
+                    ga = session.query(User).\
+                        filter(User.user_id==item.guarantor_id).one()
+                except NoResultFound:
+                    continue
+                b = dict(
+                    user_id=ga.user_id,
+                    real_name=ga.real_name
+                )
+                a.append(b)
+            return a
 
     def get_user_warrantee(self, user_id):
         # 被担保人
         try:
-            warrantee = session.query(Guarantee). \
+            w = session.query(Guarantee). \
                 filter(Guarantee.guarantor_id==int(user_id)).all()
         except NoResultFound:
             return False
 
-        if warrantee.__len__() == 1:
-            return warrantee[0].as_dict()
+        if w.__len__() == 1:
+            try:
+                wa = session.query(User). \
+                    filter(User.user_id==w[0].warrantee_id).one()
+            except NoResultFound:
+                return []
+            warrantee = dict(
+                user_id=wa.user_id,
+                real_name=wa.real_name
+            )
+            return warrantee
         else:
-            return self.change_list(warrantee)
+            a = []
+            for item in w:
+                try:
+                    wa = session.query(User). \
+                        filter(User.user_id==item.warrantee_id).one()
+                except NoResultFound:
+                    continue
+                b = dict(
+                    user_id=wa.user_id,
+                    real_name=wa.real_name
+                )
+                a.append(b)
+            return a
 
 
 class LoanModel(BaseModel):
