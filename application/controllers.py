@@ -45,9 +45,9 @@ class LoanHandler(BaseHandler):
             self.render("index.html", title="Lend", result_json=result_json)
         else:
             result = self.loan_model.get_user_new_three_loans(user['user_id'])
-            result_json = json.dumps({'result': 1, 'loan': result}, separators=(',', ':'),
-                                     encoding="utf-8", indent=4,
-                                     ensure_ascii=False)
+            result_json = json.dumps({'result': 1, 'loan': result},
+                                     separators=(',', ':'), encoding="utf-8",
+                                     indent=4, ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
 
 
@@ -62,9 +62,9 @@ class HistoryHandler(BaseHandler):
             self.render("index.html", title="Lend", result_json=result_json)
         else:
             result = self.behaviour_model.get_user_new_ten_behaviours(user['user_id'])
-            result_json = json.dumps({'result': 1, 'history': result}, separators=(',', ':'),
-                                     encoding="utf-8", indent=4,
-                                     ensure_ascii=False)
+            result_json = json.dumps({'result': 1, 'history': result},
+                                     separators=(',', ':'), encoding="utf-8",
+                                     indent=4, ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
 
 
@@ -95,13 +95,15 @@ class LoginHandler(BaseHandler):
                 self.render("index.html", title="Lend", result_json=result_json)
             else:
                 # wrong password
-                result_json = json.dumps({'result': 2}, separators=(',', ':'), indent=4,
-                                         encoding="utf-8", ensure_ascii=False)
+                result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                                         indent=4, encoding="utf-8",
+                                         ensure_ascii=False)
                 self.render("index.html", title="Lend", result_json=result_json)
         else:
             # username not exist
-            result_json = json.dumps({'result': 0}, separators=(',', ':'), indent=4,
-                                       encoding="utf-8", ensure_ascii=False)
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     indent=4, encoding="utf-8",
+                                     ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
 
 
@@ -177,7 +179,7 @@ class GuaranteeHandler(BaseHandler):
             guarantor = self.guarantee_model.get_user_guarantor(user['user_id'])
             warrantee = self.guarantee_model.get_user_warrantee(user['user_id'])
             result_json = json.dumps({'result': 1, 'guarantor': guarantor,
-                                      'warrantee': warrantee}, separators=(',', ':'),
-                                     encoding="utf-8", indent=4,
-                                     ensure_ascii=False)
+                                      'warrantee': warrantee},
+                                     separators=(',', ':'), encoding="utf-8",
+                                     indent=4, ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
