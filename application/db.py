@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from config import options
 
 Base = declarative_base()
-engine = create_engine(options.sqlalchemy, encoding="utf-8", pool_cycle=3600)
+engine = create_engine(options.sqlalchemy, encoding="utf-8", pool_recycle=3600)
 
 
 class User(Base):
