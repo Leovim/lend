@@ -9,16 +9,18 @@ from controllers import \
     RegisterHandler, \
     LoanRequestHandler, \
     DueRequestHandler, \
-    SplitRequestHandler
+    SplitRequestHandler, \
+    GuaranteeHandler
 
 handlers = [
-    (r"/loan/([0-9]+)", LoanHandler),
-    (r"/history/([0-9]+)", HistoryHandler),
+    (r"/loan", LoanHandler),
+    (r"/history", HistoryHandler),
     (r"/login", LoginHandler),
     (r"/logout", LogoutHandler),
     (r"/register", RegisterHandler),
     (r"/loan_request", LoanRequestHandler),
     (r"/due_request", DueRequestHandler),
     (r"/split_request", SplitRequestHandler),
+    (r"/guarantee", GuaranteeHandler),
     (r"/", IndexHandler),
 ]
