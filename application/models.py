@@ -145,7 +145,8 @@ class GuaranteeModel(BaseModel):
                 user_id=ga.user_id,
                 real_name=ga.real_name
             )
-            return guarantor
+            a = []
+            a.append(guarantor)
         else:
             a = []
             for item in g:
@@ -159,7 +160,7 @@ class GuaranteeModel(BaseModel):
                     real_name=ga.real_name
                 )
                 a.append(b)
-            return a
+        return a
 
     def get_user_warrantee(self, user_id):
         # 被担保人
@@ -179,7 +180,8 @@ class GuaranteeModel(BaseModel):
                 user_id=wa.user_id,
                 real_name=wa.real_name
             )
-            return warrantee
+            a = []
+            a.append(warrantee)
         else:
             a = []
             for item in w:
@@ -193,7 +195,7 @@ class GuaranteeModel(BaseModel):
                     real_name=wa.real_name
                 )
                 a.append(b)
-            return a
+        return a
 
 
 class LoanModel(BaseModel):
