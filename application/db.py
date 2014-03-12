@@ -103,7 +103,7 @@ class Loan(Base):
 
     def as_dict(self):
         c = dict()
-        for c in self.__table__.columns:
+        for item in self.__table__.columns:
             c[item.name] = getattr(self, item.name)
         return c
 
