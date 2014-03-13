@@ -7,8 +7,10 @@ from db import *
 Session = sessionmaker(bind=engine)
 session = Session()
 
+
 class BaseModel():
-    def change_list(self, result_list):
+    @staticmethod
+    def change_list(result_list):
         i = 0
         while i < result_list.__len__():
             result_list[i] = result_list[i].as_dict()
@@ -17,95 +19,100 @@ class BaseModel():
 
 
 class UserModel(BaseModel):
-    def add_user(self, user):
+    @staticmethod
+    def add_user(user):
         new_user = User(username=user['username'],
                         password=user['password'],
                         phone=user['phone'])
         session.add(new_user)
         session.commit()
 
-    def delete_user(self, user_id):
+    @staticmethod
+    def delete_user(user_id):
         user = session.query(User).filter(User.user_id == user_id)
         session.delete(user)
         session.commit()
 
-    def update_user(self, user):
-        '''
-        user = dict(
-            phone = phone,
-            real_name = real_name,
-            bank_number = bank_number,
-            alipay_number = alipay_number
-        )
-        '''
-        up_user = session.query(User).filter(User.user_id==user['user_id'])\
+    @staticmethod
+    def update_user(user):
+        # user = dict(
+        #     phone = phone,
+        #     real_name = real_name,
+        #     bank_number = bank_number,
+        #     alipay_number = alipay_number
+        # )
+        up_user = session.query(User).filter(User.user_id == user['user_id'])\
             .one()
         up_user.phone = user['phone']
         up_user.real_name = user['real_name']
         up_user.bank_number = user['bank_number']
         up_user.alipay_number = user['alipay_number']
         session.commit()
-        
-    def update_user_password(self, user):
-        '''
-        user = dict(
-            user_id=user_id,
-            password=password
-        )
-        '''
-        up_user = session.query(User).filter(User.user_id==user['user_id'])\
+
+    @staticmethod
+    def update_user_password(user):
+        # user = dict(
+        #     user_id=user_id,
+        #     password=password
+        # )
+        up_user = session.query(User).filter(User.user_id == user['user_id'])\
             .one()
         up_user.password = user['password']
         session.commit()
 
-    def update_user_avatar(self, user):
-        '''
-        user = dict(
-            user_id=user_id,
-            avatar=avatar
-        )
-        '''
-        up_user = session.query(User).filter(User.user_id==user['user_id']) \
+    @staticmethod
+    def update_user_avatar(user):
+        # user = dict(
+        #     user_id=user_id,
+        #     avatar=avatar
+        # )
+        up_user = session.query(User).filter(User.user_id == user['user_id']) \
             .one()
         up_user.avatar = user['avatar']
         session.commit()
 
-    def update_user_credit(self, user_id, credit):
-        user = session.query(User).filter(User.user_id==user_id).one()
+    @staticmethod
+    def update_user_credit(user_id, credit):
+        user = session.query(User).filter(User.user_id == user_id).one()
         user.credit = int(credit)
         session.commit()
 
-    def get_user_info(self, user_id):
+    @staticmethod
+    def get_user_info(user_id):
         try:
-            user = session.query(User).filter(User.user_id==user_id).one()
+            user = session.query(User).filter(User.user_id == user_id).one()
         except NoResultFound:
             return False
         return user.as_dict()
 
-    def get_user_id(self, username):
+    @staticmethod
+    def get_user_id(username):
         try:
-            user = session.query(User).filter(User.username==username).one()
+            user = session.query(User).filter(User.username == username).one()
         except NoResultFound:
             return False
         return int(user.user_id)
 
-    def get_user_real_name(self, user_id):
+    @staticmethod
+    def get_user_real_name(user_id):
         try:
-            user = session.query(User).filter(User.user_id==user_id).one()
+            user = session.query(User).filter(User.user_id == user_id).one()
         except NoResultFound:
             return False
         return user.real_name
 
-    def check_username_exist(self, username):
+    @staticmethod
+    def check_username_exist(username):
         try:
-            user = session.query(User).filter(User.username==username).one()
+            user = session.query(User).filter(User.username == username).one()
         except NoResultFound:
             return False
         return user.user_id
 
-    def check_phone_exist(self, phone):
+    @staticmethod
+    def check_phone_exist(phone):
         try:
-            session.query(User).filter(User.phone==phone).one()
+            session.query(User).filter(User.phone == phone).one()
         except NoResultFound:
             return False
         except MultipleResultsFound:
@@ -114,38 +121,42 @@ class UserModel(BaseModel):
 
 
 class GuaranteeModel(BaseModel):
-    def add_guarantee(self, guarantee):
+    @staticmethod
+    def add_guarantee(guarantee):
         new_guarantee = Guarantee(guarantor_id=guarantee['guarantor_id'],
                                   warrantee_id=guarantee['warrantee_id'],
                                   status=0)
         session.add(new_guarantee)
         session.commit()
 
-    def delete_guarantee(self, guarantee_id):
+    @staticmethod
+    def delete_guarantee(guarantee_id):
         guarantee = session.query(Guarantee).\
-            filter(Guarantee.guarantee_id==guarantee_id).one()
+            filter(Guarantee.guarantee_id == guarantee_id).one()
         session.delete(guarantee)
         session.commit()
 
-    def change_status(self, guarantee_id):
+    @staticmethod
+    def change_status(guarantee_id):
         # 审核完成
         guarantee = session.query(Guarantee). \
-            filter(Guarantee.guarantee_id==guarantee_id).one()
+            filter(Guarantee.guarantee_id == guarantee_id).one()
         guarantee.status = 1
         session.commit()
 
-    def get_user_guarantor(self, user_id):
+    @staticmethod
+    def get_user_guarantor(user_id):
         # 担保人
         try:
             g = session.query(Guarantee).\
-                filter(Guarantee.warrantee_id==int(user_id)).all()
+                filter(Guarantee.warrantee_id == int(user_id)).all()
         except NoResultFound:
             return []
 
         if g.__len__() == 1:
             try:
                 ga = session.query(User).\
-                    filter(User.user_id==g[0].guarantor_id).one()
+                    filter(User.user_id == g[0].guarantor_id).one()
             except NoResultFound:
                 return []
             a = []
@@ -159,7 +170,7 @@ class GuaranteeModel(BaseModel):
             for item in g:
                 try:
                     ga = session.query(User).\
-                        filter(User.user_id==item.guarantor_id).one()
+                        filter(User.user_id == item.guarantor_id).one()
                 except NoResultFound:
                     continue
                 b = dict(
@@ -169,18 +180,19 @@ class GuaranteeModel(BaseModel):
                 a.append(b)
         return a
 
-    def get_user_warrantee(self, user_id):
+    @staticmethod
+    def get_user_warrantee(user_id):
         # 被担保人
         try:
             w = session.query(Guarantee). \
-                filter(Guarantee.guarantor_id==int(user_id)).all()
+                filter(Guarantee.guarantor_id == int(user_id)).all()
         except NoResultFound:
             return []
 
         if w.__len__() == 1:
             try:
                 wa = session.query(User). \
-                    filter(User.user_id==w[0].warrantee_id).one()
+                    filter(User.user_id == w[0].warrantee_id).one()
             except NoResultFound:
                 return []
             a = []
@@ -194,7 +206,7 @@ class GuaranteeModel(BaseModel):
             for item in w:
                 try:
                     wa = session.query(User). \
-                        filter(User.user_id==item.warrantee_id).one()
+                        filter(User.user_id == item.warrantee_id).one()
                 except NoResultFound:
                     continue
                 b = dict(
@@ -206,7 +218,8 @@ class GuaranteeModel(BaseModel):
 
 
 class LoanModel(BaseModel):
-    def add_loan(self, loan):
+    @staticmethod
+    def add_loan(loan):
         new_loan = Loan(user_id=loan['user_id'],
                         guarantor1=loan['guarantor1'],
                         guarantor2=loan['guarantor2'],
@@ -214,47 +227,52 @@ class LoanModel(BaseModel):
                         remain_amount=loan['remain_amount'],
                         loan_date=loan['loan_date'],
                         due_date=loan['due_date'],
-                        split_status=loan['split_status'],
-                        due_status=loan['due_status'],
+                        split_status=0,
+                        due_status=0,
                         check_status=0)
         session.add(new_loan)
         session.commit()
 
-    def delete_loan(self, loan_id):
-        loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
+    @staticmethod
+    def delete_loan(loan_id):
+        loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
         session.delete(loan)
         session.commit()
 
-    def update_remain_amount(self, loan_id, remain_amount):
-        loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
+    @staticmethod
+    def update_remain_amount(loan_id, remain_amount):
+        loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
         loan.remain_amount = int(remain_amount)
         session.commit()
 
-    def change_due_status(self, loan_id, status):
-        loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
+    @staticmethod
+    def change_due_status(loan_id, status):
+        loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
         loan.due_status = int(status)
         session.commit()
 
-    def change_split_status(self, loan_id, status):
+    @staticmethod
+    def change_split_status(loan_id, status):
         # status: 0 未分期
         #         1 分期一次
         #         2 两次
         #         3 三次
-        loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
+        loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
         loan.split_status = int(status)
         session.commit()
 
-    def change_check_status(self, loan_id, status):
+    @staticmethod
+    def change_check_status(loan_id, status):
         # status: 0 wait to check
         #         1 ing
         #         2 complete
-        loan = session.query(Loan).filter(Loan.loan_id==loan_id).one()
+        loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
         loan.check_status = int(status)
         session.commit()
 
     def get_user_all_loans(self, user_id):
         try:
-            loans = session.query(Loan).filter(Loan.user_id==user_id).all()
+            loans = session.query(Loan).filter(Loan.user_id == user_id).all()
         except NoResultFound:
             return False
 
@@ -268,7 +286,7 @@ class LoanModel(BaseModel):
         # order_by 默认升序 可使用order_by(Loan.loan_id.desc())显示降序结果
         # 可能不够3个，需要做处理
         try:
-            loans = session.query(Loan).filter(Loan.user_id==user_id). \
+            loans = session.query(Loan).filter(Loan.user_id == user_id). \
                 order_by(Loan.user_id.desc()).all()
         except NoResultFound:
             return False
@@ -283,7 +301,7 @@ class LoanModel(BaseModel):
 
     def get_all_unchecked_loans(self):
         try:
-            loans = session.query(Loan).filter(Loan.check_status==0).all()
+            loans = session.query(Loan).filter(Loan.check_status == 0).all()
         except NoResultFound:
             return False
 
@@ -293,10 +311,11 @@ class LoanModel(BaseModel):
         else:
             return self.change_list(loans)
 
-    def get_loan_limit(self, user_id):
+    @staticmethod
+    def get_loan_limit(user_id):
         try:
             count = session.query(Guarantee).\
-                filter(Guarantee.guarantor_id==user_id).count()
+                filter(Guarantee.guarantor_id == user_id).count()
         except NoResultFound:
             return 300
         if count == 0:
@@ -310,7 +329,7 @@ class LoanModel(BaseModel):
         # return true 已超额
         # return false 未超额
         try:
-            loans = session.query(Loan).filter(Loan.user_id==user_id).\
+            loans = session.query(Loan).filter(Loan.user_id == user_id).\
                 filter(Loan.check_status.in_([0, 1])).all()
         except NoResultFound:
             return False
@@ -328,7 +347,8 @@ class LoanModel(BaseModel):
 
 
 class BehaviourModel(BaseModel):
-    def add_behaviour(self, behaviour):
+    @staticmethod
+    def add_behaviour(behaviour):
         new_behaviour = Behaviour(user_id=behaviour['user_id'],
                                   loan_id=behaviour['loan_id'],
                                   type=behaviour['type'],
@@ -338,22 +358,24 @@ class BehaviourModel(BaseModel):
         session.add(new_behaviour)
         session.commit()
 
-    def delete_behaviour(self, behaviour_id):
+    @staticmethod
+    def delete_behaviour(behaviour_id):
         behaviour = session.query(Behaviour).\
-            filter(Behaviour.behaviour_id==behaviour_id).one()
+            filter(Behaviour.behaviour_id == behaviour_id).one()
         session.delete(behaviour)
         session.commit()
 
-    def change_status(self, behaviour_id, status):
+    @staticmethod
+    def change_status(behaviour_id, status):
         behaviour = session.query(Behaviour). \
-            filter(Behaviour.behaviour_id==behaviour_id).one()
+            filter(Behaviour.behaviour_id == behaviour_id).one()
         behaviour.check_status = int(status)
         session.commit()
         
     def get_user_all_behaviours(self, user_id):
         try:
             behaviours = session.query(Behaviour).\
-                filter(Behaviour.user_id==user_id).\
+                filter(Behaviour.user_id == user_id).\
                 order_by(Behaviour.behaviour_id.desc()).all()
         except NoResultFound:
             return False
@@ -367,7 +389,7 @@ class BehaviourModel(BaseModel):
     def get_user_new_ten_behaviours(self, user_id):
         try:
             behaviours = session.query(Behaviour).\
-                filter(Behaviour.user_id==user_id).\
+                filter(Behaviour.user_id == user_id).\
                 order_by(Behaviour.behaviour_id.desc()).all()
         except NoResultFound:
             return False
@@ -384,7 +406,7 @@ class BehaviourModel(BaseModel):
     def get_all_unchecked_behaviours(self):
         try:
             behaviours = session.query(Behaviour).\
-                filter(Behaviour.check_status==0).all()
+                filter(Behaviour.check_status == 0).all()
         except NoResultFound:
             return False
 
