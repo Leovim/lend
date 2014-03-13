@@ -133,7 +133,7 @@ class GuaranteeModel(BaseModel):
             g = session.query(Guarantee).\
                 filter(Guarantee.warrantee_id==int(user_id)).all()
         except NoResultFound:
-            return False
+            return []
 
         if g.__len__() == 1:
             try:
@@ -141,12 +141,12 @@ class GuaranteeModel(BaseModel):
                     filter(User.user_id==g[0].guarantor_id).one()
             except NoResultFound:
                 return []
-            guarantor = dict(
+            a = []
+            b = dict(
                 user_id=ga.user_id,
                 real_name=ga.real_name
             )
-            a = []
-            a.append(guarantor)
+            a.append(b)
         else:
             a = []
             for item in g:
@@ -168,7 +168,7 @@ class GuaranteeModel(BaseModel):
             w = session.query(Guarantee). \
                 filter(Guarantee.guarantor_id==int(user_id)).all()
         except NoResultFound:
-            return False
+            return []
 
         if w.__len__() == 1:
             try:
@@ -176,12 +176,12 @@ class GuaranteeModel(BaseModel):
                     filter(User.user_id==w[0].warrantee_id).one()
             except NoResultFound:
                 return []
-            warrantee = dict(
+            a = []
+            b = dict(
                 user_id=wa.user_id,
                 real_name=wa.real_name
             )
-            a = []
-            a.append(warrantee)
+            a.append(b)
         else:
             a = []
             for item in w:
