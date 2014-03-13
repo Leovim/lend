@@ -201,6 +201,8 @@ class GuaranteeModel(BaseModel):
 class LoanModel(BaseModel):
     def add_loan(self, loan):
         new_loan = Loan(user_id=loan['user_id'],
+                        guarantor1=loan['guarantor1'],
+                        guarantor2=loan['guarantor2'],
                         loan_amount=loan['loan_amount'],
                         remain_amount=loan['remain_amount'],
                         loan_date=loan['loan_date'],

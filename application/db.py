@@ -76,6 +76,8 @@ class Loan(Base):
 
     loan_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.user_id'))
+    guarantor1 = Column(Integer, ForeignKey('guarantee.guarantor_id'))
+    guarantor2 = Column(Integer, ForeignKey('guarantee.guarantor_id'))
     loan_amount = Column(Integer)
     remain_amount = Column(Integer)
     loan_date = Column(String(20))
@@ -84,9 +86,12 @@ class Loan(Base):
     due_status = Column(Integer)
     check_status = Column(Integer)
 
-    def __init__(self, user_id, loan_amount, remain_amount, loan_date, due_date,
-                 split_status, due_status, check_status):
+    def __init__(self, user_id, guarantor1, guarantor2, loan_amount,
+                 remain_amount, loan_date, due_date, split_status, due_status,
+                 check_status):
         self.user_id = int(user_id)
+        self.guarantor1 = int(guarantor1)
+        self.guarantor2 = int(guarantor2)
         self.loan_amount = int(loan_amount)
         self.remain_amount = int(remain_amount)
         self.loan_date = loan_date
@@ -96,10 +101,12 @@ class Loan(Base):
         self.check_status = int(check_status)
 
     def __repr__(self):
-        return "<Loan('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')>" %\
-               (self.loan_id, self.user_id, self.loan_amount,
-                self.remain_amount, self.loan_date, self.due_date,
-                self.split_status, self.due_status, self.check_status)
+        return "<Loan('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', " \
+               "'%s', '%s')>" %\
+               (self.loan_id, self.user_id, self.guarantor1, self.guarantor2,
+                self.loan_amount, self.remain_amount, self.loan_date,
+                self.due_date, self.split_status, self.due_status,
+                self.check_status)
 
     def as_dict(self):
         c = dict()
