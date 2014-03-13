@@ -34,10 +34,10 @@ class User(Base):
         self.avatar = avatar
 
     def __repr__(self):
-        return "<User('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')>" % \
-               (self.user_id, self.username, self.password,
-                self.phone, self.real_name, self.bank_number,
-                self.alipay_number, self.credit, self.avatar)
+        return "<User('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')>" \
+               % (self.user_id, self.username, self.password, self.phone,
+                  self.real_name, self.bank_number, self.alipay_number,
+                  self.credit, self.avatar)
 
     def as_dict(self):
         c = dict()
@@ -60,9 +60,9 @@ class Guarantee(Base):
         self.status = int(status)
 
     def __repr__(self):
-        return  "<Guarantee('%s', '%s', '%s')>" % (self.guarantor_id,
-                                                   self.warrantee_id,
-                                                   self.status)
+        return "<Guarantee('%s', '%s', '%s')>" % (self.guarantor_id,
+                                                  self.warrantee_id,
+                                                  self.status)
 
     def as_dict(self):
         c = dict()
@@ -136,8 +136,8 @@ class Behaviour(Base):
 
     def __repr__(self):
         return "<Behaviour('%s', '%s', '%s', '%s', '%s', '%s', '%s')>" % \
-               (self.behaviour_id, self.user_id, self.loan_id, self.type, self.money,
-                self.time, self.check_status)
+               (self.behaviour_id, self.user_id, self.loan_id, self.type,
+                self.money, self.time, self.check_status)
 
     def as_dict(self):
         c = dict()
