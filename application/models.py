@@ -252,7 +252,8 @@ class LoanModel(BaseModel):
             return False
 
         if loans.__len__() == 1:
-            return loans[0].as_dict()
+            loans[0].as_dict()
+            return loans
         else:
             return self.change_list(loans)
 
@@ -266,7 +267,8 @@ class LoanModel(BaseModel):
             return False
 
         if loans.__len__() == 1:
-            return loans[0].as_dict()
+            loans[0].as_dict()
+            return loans
         elif loans.__len__() == 2:
             return self.change_list(loans)
         else:
@@ -279,7 +281,8 @@ class LoanModel(BaseModel):
             return False
 
         if loans.__len__() == 1:
-            return loans[0].as_dict()
+            loans[0].as_dict()
+            return loans
         else:
             return self.change_list(loans)
 
@@ -349,7 +352,8 @@ class BehaviourModel(BaseModel):
             return False
 
         if behaviours.__len__() == 1:
-            return behaviours[0].as_dict()
+            behaviours[0].as_dict()
+            return behaviours
         else:
             return self.change_list(behaviours)
 
@@ -362,7 +366,8 @@ class BehaviourModel(BaseModel):
             return False
 
         if behaviours.__len__() == 1:
-            return behaviours[0].as_dict()
+            behaviours[0].as_dict()
+            return behaviours
         elif behaviours.__len__() < 10:
             return self.change_list(behaviours)
         else:
@@ -377,6 +382,7 @@ class BehaviourModel(BaseModel):
             return False
 
         if behaviours.__len__() == 1:
-            return behaviours[0].as_dict()
+            behaviours[0].as_dict()
+            return behaviours
         else:
             return self.change_list(behaviours)
