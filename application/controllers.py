@@ -45,6 +45,15 @@ class LoanHandler(BaseHandler):
             self.render("index.html", title="Lend", result_json=result_json)
         else:
             result = self.loan_model.get_user_new_three_loans(user['user_id'])
+            i = 0
+            while i < result.__len__():
+                if result[i]['guarantor1']:
+                    result[i]['guarantor1'] = self.user_model.\
+                        get_user_real_name(result[i]['guarantor1'])
+                if result[i]['guarantor2']:
+                    result[i]['guarantor2'] = self.user_model. \
+                        get_user_real_name(result[i]['guarantor2'])
+                i += 1
             result_json = json.dumps({'result': 1, 'loan': result},
                                      separators=(',', ':'), encoding="utf-8",
                                      indent=4, ensure_ascii=False)
