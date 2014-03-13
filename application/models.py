@@ -9,6 +9,9 @@ session = Session()
 
 
 class BaseModel():
+    def __init__(self):
+        pass
+
     @staticmethod
     def change_list(result_list):
         i = 0
