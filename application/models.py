@@ -89,6 +89,13 @@ class UserModel(BaseModel):
             return False
         return int(user.user_id)
 
+    def get_user_real_name(self, user_id):
+        try:
+            user = session.query(User).filter(User.user_id==user_id).one()
+        except NoResultFound:
+            return False
+        return user.real_name
+
     def check_username_exist(self, username):
         try:
             user = session.query(User).filter(User.username==username).one()
