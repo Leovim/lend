@@ -279,11 +279,7 @@ class LoanModel(BaseModel):
         except NoResultFound:
             return False
 
-        if loans.__len__() == 1:
-            loans[0].as_dict()
-            return loans
-        else:
-            return self.change_list(loans)
+        return self.change_list(loans)
 
     def get_user_new_three_loans(self, user_id):
         # order_by 默认升序 可使用order_by(Loan.loan_id.desc())显示降序结果
@@ -294,10 +290,7 @@ class LoanModel(BaseModel):
         except NoResultFound:
             return False
 
-        if loans.__len__() == 1:
-            loans[0].as_dict()
-            return loans
-        elif loans.__len__() == 2:
+        if loans.__len__() == 1 or loans.__len__() == 2:
             return self.change_list(loans)
         else:
             return self.change_list(loans[0:3])
@@ -307,18 +300,13 @@ class LoanModel(BaseModel):
             loans = session.query(Loan).filter(Loan.check_status == 0).all()
         except NoResultFound:
             return False
-
-        if loans.__len__() == 1:
-            loans[0].as_dict()
-            return loans
-        else:
-            return self.change_list(loans)
+        return self.change_list(loans)
 
     @staticmethod
     def get_loan_limit(user_id):
         try:
             count = session.query(Guarantee).\
-                filter(Guarantee.guarantor_id == user_id).count()
+                filter(Guarantee.warrantee_id == user_id).count()
         except NoResultFound:
             return 300
         if count == 0:
@@ -343,15 +331,21 @@ class LoanModel(BaseModel):
 
         total_loan_money += loan_amount
         loan_limit = self.get_loan_limit(user_id)
+        print "total_loan_money = %d" % total_loan_money
+        print "loan_limit = %d" % loan_limit
         if total_loan_money <= loan_limit:
-            return True
-        else:
             return False
+        else:
+            return True
 
 
 class BehaviourModel(BaseModel):
     @staticmethod
     def add_behaviour(behaviour):
+        # 1. 借款
+        # 2. 还款
+        # 3. 分期
+        # 4. 逾期
         new_behaviour = Behaviour(user_id=behaviour['user_id'],
                                   loan_id=behaviour['loan_id'],
                                   type=behaviour['type'],
@@ -383,11 +377,7 @@ class BehaviourModel(BaseModel):
         except NoResultFound:
             return False
 
-        if behaviours.__len__() == 1:
-            behaviours[0].as_dict()
-            return behaviours
-        else:
-            return self.change_list(behaviours)
+        return self.change_list(behaviours)
 
     def get_user_new_ten_behaviours(self, user_id):
         try:
@@ -397,10 +387,7 @@ class BehaviourModel(BaseModel):
         except NoResultFound:
             return False
 
-        if behaviours.__len__() == 1:
-            behaviours[0].as_dict()
-            return behaviours
-        elif behaviours.__len__() < 10:
+        if behaviours.__len__() < 10:
             return self.change_list(behaviours)
         else:
             return self.change_list(behaviours[0:10])
@@ -413,8 +400,4 @@ class BehaviourModel(BaseModel):
         except NoResultFound:
             return False
 
-        if behaviours.__len__() == 1:
-            behaviours[0].as_dict()
-            return behaviours
-        else:
-            return self.change_list(behaviours)
+        return self.change_list(behaviours)
