@@ -1,8 +1,6 @@
 #coding=utf8
 
 import json
-import hashlib
-# import datetime
 import tornado.web
 from models import *
 
@@ -21,7 +19,7 @@ class BaseHandler(tornado.web.RequestHandler):
     
     @staticmethod
     def interest_round(interest):
-        return round(interest * 100) / 100
+        return round(int(interest) * 100) / 100
 
     def calc_one_interest(self, principal):
         if principal <= 200:
@@ -95,15 +93,17 @@ class BaseHandler(tornado.web.RequestHandler):
         elif principal <= 1200:
             return self.interest_round(13.51 + (principal - 1100) * 0.220 / 13)
 
-    def calc_interest(self, principal, time):
+    def calc_interest(self, principal, term):
         # time: week number
         # rate: 22.2% = 0.222
-        if time == 1:
-            return self.calc_one_interest(principal)
-        elif time == 2:
-            return self.calc_two_interest(principal)
-        elif time == 4:
-            return self.calc_four_interest(principal)
+        principal_ = int(principal)
+        term_ = int(term)
+        if term_ == 1:
+            return self.calc_one_interest(principal_)
+        elif term_ == 2:
+            return self.calc_two_interest(principal_)
+        elif term_ == 4:
+            return self.calc_four_interest(principal_)
 
 
 class IndexHandler(BaseHandler):
@@ -169,6 +169,7 @@ class LoginHandler(BaseHandler):
         if user_id:
             user_info = self.user_model.get_user_info(user_id)
             # password hash
+            import hashlib
             sha = hashlib.sha1()
             sha.update(password)
             sha_password = sha.hexdigest()
@@ -212,6 +213,7 @@ class RegisterHandler(BaseHandler):
         password = self.get_argument('password', None)
 
         # password hash
+        import hashlib
         sha = hashlib.sha1()
         sha.update(password)
         sha_password = sha.hexdigest()
@@ -248,7 +250,7 @@ class RegisterHandler(BaseHandler):
 
 class LoanRequestHandler(BaseHandler):
     def post(self):
-        user = self.current_user()
+        user = self.get_current_user()
         if not user:
             # not logged in
             result_json = json.dumps({'result': 0}, separators=(',', ':'),
@@ -256,18 +258,71 @@ class LoanRequestHandler(BaseHandler):
                                      ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
         else:
-            loan_amount = self.get_argument("loan_amount", None)
-            loan_date = self.get_argument("loan_date", None)
+            loan_amount = int(self.get_argument("loan_amount", None))
+            term = int(self.get_argument("term", None))
 
             # 检验额度，估计贷款各段利息，计算利息，根据已担保人数进行利息减免，计算手续费，计算到期日期，获取被担保人ID，写入数据库
             if self.loan_model.check_total_loan_money(user['user_id'],
-                                                      int(loan_amount)):
+                                                      loan_amount):
                 result_json = json.dumps({'result': 2}, separators=(',', ':'),
                                          encoding="utf-8", indent=4,
                                          ensure_ascii=False)
                 self.render("index.html", title="Lend", result_json=result_json)
             else:
-                pass
+                interest = self.calc_interest(loan_amount, term)
+                warrantee_num = self.guarantee_model.\
+                    get_user_warrantee(user['user_id']).__len__()
+                if warrantee_num == 1:
+                    interest = self.interest_round(interest * 0.9)
+                elif warrantee_num == 2:
+                    interest = self.interest_round(interest * 0.8)
+                fee = 5
+                remain_amount = loan_amount + interest + fee
+
+                # datetime
+                import datetime
+                today = datetime.date.today()
+                loan_date = today.__str__()
+                week = datetime.timedelta(days=7)
+                due_date = (today + week * term).__str__()
+
+                guarantor = self.guarantee_model. \
+                    get_user_guarantor(user['user_id'])
+                guarantor1 = None
+                guarantor2 = None
+                if guarantor.__len__() == 1:
+                    guarantor1 = int(guarantor[0]['guarantor_id'])
+                elif guarantor.__len__() == 2:
+                    guarantor1 = int(guarantor[0]['guarantor_id'])
+                    guarantor2 = int(guarantor[1]['guarantor_id'])
+                loan = dict(
+                    user_id=user['user_id'],
+                    # need to check
+                    guarantor1=guarantor1,
+                    guarantor2=guarantor2,
+                    loan_amount=loan_amount,
+                    remain_amount=remain_amount,
+                    loan_date=loan_date,
+                    due_date=due_date
+                )
+                self.loan_model.add_loan(loan)
+
+                this_loan = self.loan_model.get_user_new_three_loans(user['user_id'])
+                loan_id = int(this_loan[0]['loan_id'])
+                behaviour = dict(
+                    user_id=user['user_id'],
+                    loan_id=loan_id,
+                    type=1,
+                    money=loan_amount,
+                    time=loan_date,
+                    check_status=0
+                )
+                self.behaviour_model.add_behaviour(behaviour)
+
+                result_json = json.dumps({'result': 1}, separators=(',', ':'),
+                                         encoding="utf-8", indent=4,
+                                         ensure_ascii=False)
+                self.render("index.html", title="Lend", result_json=result_json)
 
 
 class DueRequestHandler(BaseHandler):
