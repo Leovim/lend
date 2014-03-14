@@ -90,8 +90,8 @@ class Loan(Base):
                  remain_amount, loan_date, due_date, split_status, due_status,
                  check_status):
         self.user_id = int(user_id)
-        self.guarantor1 = int(guarantor1)
-        self.guarantor2 = int(guarantor2)
+        self.guarantor1 = guarantor1
+        self.guarantor2 = guarantor2
         self.loan_amount = int(loan_amount)
         self.remain_amount = int(remain_amount)
         self.loan_date = loan_date
