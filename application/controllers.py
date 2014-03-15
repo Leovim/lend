@@ -359,9 +359,17 @@ class DueRequestHandler(BaseHandler):
                                          day=int(due_date_list[2]))
                 week = datetime.timedelta(days=7)
                 due_date = (due_date + week * term).__str__()
+
                 interest = self.calc_extra_interest(loan['loan_amount'], term)
+                warrantee_num = self.guarantee_model. \
+                    get_user_warrantee(user['user_id']).__len__()
+                if warrantee_num == 1:
+                    interest = self.interest_round(interest * 0.9)
+                elif warrantee_num == 2:
+                    interest = self.interest_round(interest * 0.8)
                 fee = 5
                 remain_amount = loan['remain_amount'] + interest + fee
+
                 # update data
                 self.loan_model.change_due_status(loan['loan_id'],
                                                   loan['due_status']+1,
