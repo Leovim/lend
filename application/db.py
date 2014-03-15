@@ -79,7 +79,7 @@ class Loan(Base):
     guarantor1 = Column(Integer, ForeignKey('guarantee.guarantor_id'))
     guarantor2 = Column(Integer, ForeignKey('guarantee.guarantor_id'))
     loan_amount = Column(Integer)
-    remain_amount = Column(Integer)
+    remain_amount = Column(Float)
     loan_date = Column(String(20))
     due_date = Column(String(20))
     split_status = Column(Integer)
@@ -122,7 +122,7 @@ class Behaviour(Base):
     user_id = Column(Integer, ForeignKey('loan.user_id'))
     loan_id = Column(Integer, ForeignKey('loan.loan_id'))
     type = Column(Integer)
-    money = Column(Integer)
+    money = Column(Float)
     time = Column(String(20))
     check_status = Column(Integer)
 
@@ -130,7 +130,7 @@ class Behaviour(Base):
         self.user_id = int(user_id)
         self.loan_id = int(loan_id)
         self.type = int(type)
-        self.money = int(money)
+        self.money = money
         self.time = time
         self.check_status = int(check_status)
 
