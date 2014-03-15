@@ -19,7 +19,7 @@ class BaseHandler(tornado.web.RequestHandler):
     
     @staticmethod
     def interest_round(interest):
-        return round(int(interest) * 100) / 100
+        return round(interest * 100) / 100
 
     def calc_one_interest(self, principal):
         if principal <= 200:
@@ -92,6 +92,9 @@ class BaseHandler(tornado.web.RequestHandler):
             return self.interest_round(11.86 + (principal - 1000) * 0.215 / 13)
         elif principal <= 1200:
             return self.interest_round(13.51 + (principal - 1100) * 0.220 / 13)
+
+    def calc_extra_interest(self, principal, term):
+        return self.interest_round(principal * 0.22 * term / 52)
 
     def calc_interest(self, principal, term):
         # time: week number
@@ -361,13 +364,14 @@ class DueRequestHandler(BaseHandler):
                 remain_amount = loan['remain_amount'] + interest + fee
                 # update data
                 self.loan_model.change_due_status(loan['loan_id'],
-                                                  loan['status']+1,
+                                                  loan['due_status']+1,
                                                   due_date,
                                                   remain_amount)
                 # create behaviour
                 behaviour = dict(
+                    user_id=loan['user_id'],
                     loan_id=loan['loan_id'],
-                    type=loan['status']+4,
+                    type=loan['due_status']+4,
                     money=remain_amount,
                     time=datetime.date.today().__str__(),
                     check_status=1
