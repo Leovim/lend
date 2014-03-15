@@ -259,7 +259,7 @@ class LoanModel(BaseModel):
         loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
         loan.due_status = int(status)
         loan.due_date = due_date
-        loan.remain_amount = int(remain_amount)
+        loan.remain_amount = remain_amount
         session.commit()
 
     @staticmethod
