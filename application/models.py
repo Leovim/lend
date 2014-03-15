@@ -249,6 +249,12 @@ class LoanModel(BaseModel):
         session.commit()
 
     @staticmethod
+    def update_due_date(loan_id, due_date):
+        loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
+        loan.due_date = due_date
+        session.commit()
+
+    @staticmethod
     def change_due_status(loan_id, status):
         loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
         loan.due_status = int(status)
@@ -272,6 +278,14 @@ class LoanModel(BaseModel):
         loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
         loan.check_status = int(status)
         session.commit()
+
+    @staticmethod
+    def get_loan_info(loan_id):
+        try:
+            loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
+        except NoResultFound:
+            return False
+        return loan.as_dict()
 
     def get_user_all_loans(self, user_id):
         try:
