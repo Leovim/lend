@@ -242,22 +242,24 @@ class LoanModel(BaseModel):
         session.delete(loan)
         session.commit()
 
-    @staticmethod
-    def update_remain_amount(loan_id, remain_amount):
-        loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
-        loan.remain_amount = int(remain_amount)
-        session.commit()
+    # @staticmethod
+    # def update_remain_amount(loan_id, remain_amount):
+    #     loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
+    #     loan.remain_amount = int(remain_amount)
+    #     session.commit()
+    #
+    # @staticmethod
+    # def update_due_date(loan_id, due_date):
+    #     loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
+    #     loan.due_date = due_date
+    #     session.commit()
 
     @staticmethod
-    def update_due_date(loan_id, due_date):
-        loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
-        loan.due_date = due_date
-        session.commit()
-
-    @staticmethod
-    def change_due_status(loan_id, status):
+    def change_due_status(loan_id, status, due_date, remain_amount):
         loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
         loan.due_status = int(status)
+        loan.due_date = due_date
+        loan.remain_amount = int(remain_amount)
         session.commit()
 
     @staticmethod
