@@ -180,10 +180,14 @@ class LoginHandler(BaseHandler):
                 # success
                 self.set_secure_cookie("user", str(user_id))
                 del user_info['password']
+                guarantor = self.guarantee_model.get_user_guarantor(user_id)
+                warrantee = self.guarantee_model.get_user_warrantee(user_id)
                 result_json = json.dumps({'result': 1,
                                           'user': user_info,
                                           'loans': loans,
-                                          'histories': histories},
+                                          'histories': histories,
+                                          'guarantors': guarantor,
+                                          'warrantees': warrantee},
                                          separators=(',', ':'), indent=4,
                                          encoding="utf-8", ensure_ascii=False)
                 self.render("index.html", title="Lend", result_json=result_json)
@@ -307,7 +311,8 @@ class LoanRequestHandler(BaseHandler):
                 )
                 self.loan_model.add_loan(loan)
 
-                this_loan = self.loan_model.get_user_new_three_loans(user['user_id'])
+                this_loan = self.loan_model.\
+                    get_user_new_three_loans(user['user_id'])
                 loan_id = int(this_loan[0]['loan_id'])
                 behaviour = dict(
                     user_id=user['user_id'],
@@ -328,15 +333,59 @@ class LoanRequestHandler(BaseHandler):
 class DueRequestHandler(BaseHandler):
     def post(self):
         user = self.get_current_user()
-        if user:
-            loan_id = self.get_argument("loan_id", None)
-            due_time = self.get_argument("due_time", None)
+        if not user:
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+        else:
+            loan_id = int(self.get_argument("loan_id", None))
+            term = int(self.get_argument("term", None))
+            loan = self.loan_model.get_loan_info(loan_id)
+            # 只能逾期两次
+            if loan['due_status'] == 2:
+                result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                                         encoding="utf-8", indent=4,
+                                         ensure_ascii=False)
+                self.render("index.html", title="Lend", result_json=result_json)
+            else:
+                import datetime
+                due_date_list = loan['due_date'].split('-')
+                due_date = datetime.date(year=int(due_date_list[0]),
+                                         month=int(due_date_list[1]),
+                                         day=int(due_date_list[2]))
+                week = datetime.timedelta(days=7)
+                due_date = (due_date + week * term).__str__()
+                interest = self.calc_extra_interest(loan['loan_amount'], term)
+                fee = 5
+                remain_amount = loan['remain_amount'] + interest + fee
+                # update data
+                self.loan_model.change_due_status(loan['loan_id'],
+                                                  loan['status']+1,
+                                                  due_date,
+                                                  remain_amount)
+                # create behaviour
+                behaviour = dict(
+                    loan_id=loan['loan_id'],
+                    type=loan['status']+4,
+                    money=remain_amount,
+                    time=datetime.date.today().__str__(),
+                    check_status=1
+                )
+                self.behaviour_model.add_behaviour(behaviour)
+                result_json = json.dumps({'result': 1}, separators=(',', ':'),
+                                         encoding="utf-8", indent=4,
+                                         ensure_ascii=False)
+                self.render("index.html", title="Lend", result_json=result_json)
 
 
 class SplitRequestHandler(BaseHandler):
     def post(self):
         loan_id = self.get_argument("loan_id", None)
-        pass
+        result_json = json.dumps({'result': loan_id}, separators=(',', ':'),
+                                 encoding="utf-8", indent=4,
+                                 ensure_ascii=False)
+        self.render("index.html", title="Lend", result_json=result_json)
 
 
 class GuaranteeHandler(BaseHandler):
