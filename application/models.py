@@ -50,6 +50,15 @@ class UserModel(BaseModel):
         up_user.real_name = user['real_name']
         up_user.bank_number = user['bank_number']
         up_user.alipay_number = user['alipay_number']
+        up_user.identify_number = user['identify_number']
+        up_user.school = user['school']
+        up_user.department = user['department']
+        up_user.major = user['major']
+        up_user.student_id = user['student_id']
+        up_user.dorm = user['dorm']
+        up_user.pic1 = user['pic1']
+        up_user.pic2 = user['pic2']
+        up_user.pic3 = user['pic3']
         session.commit()
 
     @staticmethod

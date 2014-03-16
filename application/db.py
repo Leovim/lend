@@ -21,10 +21,21 @@ class User(Base):
     credit = Column(Integer)
     avatar = Column(String(50))
     status = Column(Integer)
+    identify_number = Column(String(20))
+    school = Column(String(10))
+    department = Column(String(20))
+    major = Column(String(20))
+    student_id = Column(String(15))
+    dorm = Column(String(20))
+    pic1 = Column(String(50))
+    pic2 = Column(String(50))
+    pic3 = Column(String(50))
 
     def __init__(self, username, password, phone, real_name=None,
-                 bank_number=None, alipay_number=None, credit=1,
-                 avatar=None, status=0):
+                 bank_number=None, alipay_number=None, credit=1, avatar=None,
+                 status=0, identify_number=None, school=None, department=None,
+                 major=None, student_id=None, dorm=None, pic1=None, pic2=None,
+                 pic3=None):
         self.username = username
         self.password = password
         self.phone = phone
@@ -34,13 +45,25 @@ class User(Base):
         self.credit = int(credit)
         self.avatar = avatar
         self.status = status
+        self.identify_number = identify_number
+        self.school = school
+        self.department = department
+        self.major = major
+        self.student_id = student_id
+        self.dorm = dorm
+        self.pic1 = pic1
+        self.pic2 = pic2
+        self.pic3 = pic3
 
     def __repr__(self):
         return "<User('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'," \
-               " '%s')>" % \
+               " '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')>"\
+               % \
                (self.user_id, self.username, self.password, self.phone,
                 self.real_name, self.bank_number, self.alipay_number,
-                self.credit, self.avatar, self.status)
+                self.credit, self.avatar, self.status, self.identify_number,
+                self.school, self.department, self.major, self.student_id,
+                self.dorm, self.pic1, self.pic2, self.pic3)
 
     def as_dict(self):
         c = dict()
