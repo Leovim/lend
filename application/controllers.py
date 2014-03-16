@@ -144,9 +144,10 @@ class UserHandler(BaseHandler):
             self.render("index.html", title="Lend", result_json=result_json)
         else:
             del user['password']
-            result_json = json.dumps({'result': 1, 'user': user}, separators=(',', ':'),
-                                     encoding="utf-8", indent=4,
-                                     ensure_ascii=False)
+            user['loan_limit'] = self.loan_model.get_loan_limit(user['user_id'])
+            result_json = json.dumps({'result': 1, 'user': user},
+                                     separators=(',', ':'), encoding="utf-8",
+                                     indent=4, ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
 
 
@@ -472,22 +473,28 @@ class GuaranteeRequestHandler(BaseHandler):
                 if guarantor['status'] == 1:
                     if guarantor['phone'] == phone:
                         result = self.send_sms(phone, verify)
-                        result_json = json.dumps({'result': result}, separators=(',', ':'),
+                        result_json = json.dumps({'result': result},
+                                                 separators=(',', ':'),
                                                  encoding="utf-8", indent=4,
                                                  ensure_ascii=False)
-                        self.render("index.html", title="Lend", result_json=result_json)
+                        self.render("index.html", title="Lend",
+                                    result_json=result_json)
                     else:
                         # 用户电话号码不匹配
-                        result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                        result_json = json.dumps({'result': 2},
+                                                 separators=(',', ':'),
                                                  encoding="utf-8", indent=4,
                                                  ensure_ascii=False)
-                        self.render("index.html", title="Lend", result_json=result_json)
+                        self.render("index.html", title="Lend",
+                                    result_json=result_json)
                 else:
                     # 该用户没有完善资料
-                    result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                    result_json = json.dumps({'result': 2},
+                                             separators=(',', ':'),
                                              encoding="utf-8", indent=4,
                                              ensure_ascii=False)
-                    self.render("index.html", title="Lend", result_json=result_json)
+                    self.render("index.html", title="Lend",
+                                result_json=result_json)
 
 
 class SendSmsHandler(BaseHandler):
