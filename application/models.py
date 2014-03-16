@@ -39,14 +39,22 @@ class UserModel(BaseModel):
     @staticmethod
     def update_user(user):
         # user = dict(
-        #     phone = phone,
-        #     real_name = real_name,
-        #     bank_number = bank_number,
-        #     alipay_number = alipay_number
+        #     real_name
+        #     bank_number
+        #     alipay_number
+        #     identify_number
+        #     school
+        #     department
+        #     major
+        #     dorm
+        #     student_id
+        #     avatar
+        #     pic1
+        #     pic2
+        #     pic3
         # )
         up_user = session.query(User).filter(User.user_id == user['user_id'])\
             .one()
-        up_user.phone = user['phone']
         up_user.real_name = user['real_name']
         up_user.bank_number = user['bank_number']
         up_user.alipay_number = user['alipay_number']
