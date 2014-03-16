@@ -9,6 +9,7 @@ from controllers import \
     LoginHandler, \
     LogoutHandler, \
     RegisterHandler, \
+    UpdateHandler, \
     LoanRequestHandler, \
     DueRequestHandler, \
     SplitRequestHandler, \
@@ -22,6 +23,7 @@ handlers = [
     (r"/login", LoginHandler),
     (r"/logout", LogoutHandler),
     (r"/register", RegisterHandler),
+    (r"/update", UpdateHandler),
     (r"/loan_request", LoanRequestHandler),
     (r"/due_request", DueRequestHandler),
     (r"/split_request", SplitRequestHandler),
