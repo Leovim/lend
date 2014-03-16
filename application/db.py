@@ -20,10 +20,11 @@ class User(Base):
     alipay_number = Column(String(40))
     credit = Column(Integer)
     avatar = Column(String(50))
+    status = Column(Integer)
 
     def __init__(self, username, password, phone, real_name=None,
                  bank_number=None, alipay_number=None, credit=1,
-                 avatar=None):
+                 avatar=None, status=0):
         self.username = username
         self.password = password
         self.phone = phone
@@ -32,12 +33,14 @@ class User(Base):
         self.alipay_number = alipay_number
         self.credit = int(credit)
         self.avatar = avatar
+        self.status = status
 
     def __repr__(self):
-        return "<User('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')>" \
-               % (self.user_id, self.username, self.password, self.phone,
-                  self.real_name, self.bank_number, self.alipay_number,
-                  self.credit, self.avatar)
+        return "<User('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'," \
+               " '%s')>" % \
+               (self.user_id, self.username, self.password, self.phone,
+                self.real_name, self.bank_number, self.alipay_number,
+                self.credit, self.avatar, self.status)
 
     def as_dict(self):
         c = dict()
