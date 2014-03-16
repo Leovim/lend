@@ -75,6 +75,13 @@ class UserModel(BaseModel):
         session.commit()
 
     @staticmethod
+    def update_user_status(user_id):
+        # change user status to 1 完善资料之后
+        up_user = session.query(User).filter(User.user_id == user_id).one()
+        up_user.status = 1
+        session.commit()
+
+    @staticmethod
     def update_user_credit(user_id, credit):
         user = session.query(User).filter(User.user_id == user_id).one()
         user.credit = int(credit)
