@@ -43,3 +43,6 @@ nosetests.xml
 
 # config file
 config.py
+
+# test file
+test.py
