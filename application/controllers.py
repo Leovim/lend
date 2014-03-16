@@ -437,6 +437,42 @@ class SplitRequestHandler(BaseHandler):
         self.render("index.html", title="Lend", result_json=result_json)
 
 
+class GuaranteeRequestHandler(BaseHandler):
+    def post(self):
+        user = self.get_current_user()
+        if not user:
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+        else:
+            guarantor_name = self.get_argument("guarantor_name", None)
+            phone = self.get_argument("phone", None)
+            verify = self.get_argument("verify", None)
+            guarantor_id = self.user_model.check_username_exist(guarantor_name)
+            if guarantor_id:
+                guarantor = self.user_model.get_user_info(guarantor_id)
+                if guarantor['status'] == 1:
+                    if guarantor['phone'] == phone:
+                        result = self.send_sms(phone, verify)
+                        result_json = json.dumps({'result': result}, separators=(',', ':'),
+                                                 encoding="utf-8", indent=4,
+                                                 ensure_ascii=False)
+                        self.render("index.html", title="Lend", result_json=result_json)
+                    else:
+                        # 用户电话号码不匹配
+                        result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                                                 encoding="utf-8", indent=4,
+                                                 ensure_ascii=False)
+                        self.render("index.html", title="Lend", result_json=result_json)
+                else:
+                    # 该用户没有完善资料
+                    result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                                             encoding="utf-8", indent=4,
+                                             ensure_ascii=False)
+                    self.render("index.html", title="Lend", result_json=result_json)
+
+
 class SendSmsHandler(BaseHandler):
     def post(self):
         phone = self.get_argument("phone", None)
