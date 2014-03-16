@@ -375,7 +375,7 @@ class LoanRequestHandler(BaseHandler):
                 behaviour = dict(
                     user_id=user['user_id'],
                     loan_id=loan_id,
-                    type=1,
+                    bhv_type=1,
                     money=loan_amount,
                     time=loan_date,
                     check_status=0
@@ -434,7 +434,7 @@ class DueRequestHandler(BaseHandler):
                 behaviour = dict(
                     user_id=loan['user_id'],
                     loan_id=loan['loan_id'],
-                    type=loan['due_status']+4,
+                    bhv_type=loan['due_status']+4,
                     money=remain_amount,
                     time=datetime.date.today().__str__(),
                     check_status=1

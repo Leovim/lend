@@ -147,22 +147,22 @@ class Behaviour(Base):
     behaviour_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('loan.user_id'))
     loan_id = Column(Integer, ForeignKey('loan.loan_id'))
-    type = Column(Integer)
+    bhv_type = Column(Integer)
     money = Column(Float)
     time = Column(String(20))
     check_status = Column(Integer)
 
-    def __init__(self, user_id, loan_id, type, money, time, check_status):
+    def __init__(self, user_id, loan_id, bhv_type, money, time, check_status):
         self.user_id = int(user_id)
         self.loan_id = int(loan_id)
-        self.type = int(type)
+        self.bhv_type = int(bhv_type)
         self.money = money
         self.time = time
         self.check_status = int(check_status)
 
     def __repr__(self):
         return "<Behaviour('%s', '%s', '%s', '%s', '%s', '%s', '%s')>" % \
-               (self.behaviour_id, self.user_id, self.loan_id, self.type,
+               (self.behaviour_id, self.user_id, self.loan_id, self.bhv_type,
                 self.money, self.time, self.check_status)
 
     def as_dict(self):

@@ -380,7 +380,7 @@ class BehaviourModel(BaseModel):
         # 4. 逾期
         new_behaviour = Behaviour(user_id=behaviour['user_id'],
                                   loan_id=behaviour['loan_id'],
-                                  type=behaviour['type'],
+                                  bhv_type=behaviour['bhv_type'],
                                   money=behaviour['money'],
                                   time=behaviour['time'],
                                   check_status=behaviour['check_status'])
