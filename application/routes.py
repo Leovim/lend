@@ -2,6 +2,7 @@
 
 from controllers import \
     IndexHandler, \
+    UserHandler, \
     LoanHandler, \
     HistoryHandler, \
     GuaranteeHandler, \
@@ -14,6 +15,7 @@ from controllers import \
     SendSmsHandler
 
 handlers = [
+    (r"/user", UserHandler),
     (r"/loan", LoanHandler),
     (r"/history", HistoryHandler),
     (r"/guarantee", GuaranteeHandler),

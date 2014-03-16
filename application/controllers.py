@@ -8,7 +8,6 @@ from config import options
 # todo 上传图片
 # todo 完善用户资料
 # todo 分期请求处理
-# todo 添加担保关系
 # todo 推送
 
 
@@ -135,6 +134,22 @@ class IndexHandler(BaseHandler):
         self.render("index.html", title="Lend", result_json=result_json)
 
 
+class UserHandler(BaseHandler):
+    def get(self):
+        user = self.get_current_user()
+        if not user:
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+        else:
+            del user['password']
+            result_json = json.dumps({'result': 1, 'user': user}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+
+
 class LoanHandler(BaseHandler):
     # todo 用户完善资料后才能借款
     def get(self):
@@ -220,6 +235,8 @@ class LoginHandler(BaseHandler):
                 # success
                 self.set_secure_cookie("user", str(user_id))
                 del user_info['password']
+                user_info['loan_limit'] = \
+                    self.loan_model.get_loan_limit(user_info['user_id'])
                 guarantor = self.guarantee_model.get_user_guarantor(user_id)
                 warrantee = self.guarantee_model.get_user_warrantee(user_id)
                 result_json = json.dumps({'result': 1,
