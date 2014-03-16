@@ -4,23 +4,25 @@ from controllers import \
     IndexHandler, \
     LoanHandler, \
     HistoryHandler, \
+    GuaranteeHandler, \
     LoginHandler, \
     LogoutHandler, \
     RegisterHandler, \
     LoanRequestHandler, \
     DueRequestHandler, \
     SplitRequestHandler, \
-    GuaranteeHandler
+    SendSmsHandler
 
 handlers = [
     (r"/loan", LoanHandler),
     (r"/history", HistoryHandler),
+    (r"/guarantee", GuaranteeHandler),
     (r"/login", LoginHandler),
     (r"/logout", LogoutHandler),
     (r"/register", RegisterHandler),
     (r"/loan_request", LoanRequestHandler),
     (r"/due_request", DueRequestHandler),
     (r"/split_request", SplitRequestHandler),
-    (r"/guarantee", GuaranteeHandler),
+    (r"/send_sms", SendSmsHandler),
     (r"/", IndexHandler),
 ]

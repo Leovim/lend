@@ -3,6 +3,13 @@
 import json
 import tornado.web
 from models import *
+from config import options
+
+# todo 上传图片
+# todo 完善用户资料
+# todo 分期请求处理
+# todo 添加担保关系
+# todo 推送
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -108,6 +115,16 @@ class BaseHandler(tornado.web.RequestHandler):
         elif term_ == 4:
             return self.calc_four_interest(principal_)
 
+    @staticmethod
+    def send_sms(phone, verification_code):
+        url = "http://utf8.sms.webchinese.cn/?Uid=shuguozhu&Key=" \
+              + options.sms_secret + "&smsMob=" + phone + "&smsText=" \
+              "%E6%82%A8%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E6%98%AF" + \
+              verification_code
+        import urllib2
+        a = urllib2.urlopen(url)
+        return a.read()
+
 
 class IndexHandler(BaseHandler):
     def get(self, arg):
@@ -119,6 +136,7 @@ class IndexHandler(BaseHandler):
 
 
 class LoanHandler(BaseHandler):
+    # todo 用户完善资料后才能借款
     def get(self):
         # user_id = 1
         user = self.get_current_user()
@@ -158,6 +176,25 @@ class HistoryHandler(BaseHandler):
             result = self.behaviour_model.\
                 get_user_new_ten_behaviours(user['user_id'])
             result_json = json.dumps({'result': 1, 'history': result},
+                                     separators=(',', ':'), encoding="utf-8",
+                                     indent=4, ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+
+
+class GuaranteeHandler(BaseHandler):
+    def get(self):
+        user = self.get_current_user()
+        if not user:
+            # raise tornado.web.HTTPError(404)
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+        else:
+            guarantor = self.guarantee_model.get_user_guarantor(user['user_id'])
+            warrantee = self.guarantee_model.get_user_warrantee(user['user_id'])
+            result_json = json.dumps({'result': 1, 'guarantor': guarantor,
+                                      'warrantee': warrantee},
                                      separators=(',', ':'), encoding="utf-8",
                                      indent=4, ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
@@ -400,20 +437,13 @@ class SplitRequestHandler(BaseHandler):
         self.render("index.html", title="Lend", result_json=result_json)
 
 
-class GuaranteeHandler(BaseHandler):
-    def get(self):
-        user = self.get_current_user()
-        if not user:
-            # raise tornado.web.HTTPError(404)
-            result_json = json.dumps({'result': 0}, separators=(',', ':'),
-                                     encoding="utf-8", indent=4,
-                                     ensure_ascii=False)
-            self.render("index.html", title="Lend", result_json=result_json)
-        else:
-            guarantor = self.guarantee_model.get_user_guarantor(user['user_id'])
-            warrantee = self.guarantee_model.get_user_warrantee(user['user_id'])
-            result_json = json.dumps({'result': 1, 'guarantor': guarantor,
-                                      'warrantee': warrantee},
-                                     separators=(',', ':'), encoding="utf-8",
-                                     indent=4, ensure_ascii=False)
-            self.render("index.html", title="Lend", result_json=result_json)
+class SendSmsHandler(BaseHandler):
+    def post(self):
+        phone = self.get_argument("phone", None)
+        verify = self.get_argument("verify", None)
+        result = self.send_sms(phone, verify)
+
+        result_json = json.dumps({'result': result}, separators=(',', ':'),
+                                 encoding="utf-8", indent=4,
+                                 ensure_ascii=False)
+        self.render("index.html", title="Lend", result_json=result_json)
