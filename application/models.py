@@ -64,6 +64,7 @@ class UserModel(BaseModel):
         up_user.major = user['major']
         up_user.student_id = user['student_id']
         up_user.dorm = user['dorm']
+        up_user.avatar = user['avatar']
         up_user.pic1 = user['pic1']
         up_user.pic2 = user['pic2']
         up_user.pic3 = user['pic3']
