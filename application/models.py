@@ -442,3 +442,37 @@ class BehaviourModel(BaseModel):
             return False
 
         return self.change_list(behaviours)
+
+
+class SplitLoanModel(BaseModel):
+    @staticmethod
+    def add_split(split):
+        new_split = SplitLoan(loan_id=split['loan_id'],
+                              total_time=split['total_time'],
+                              interval_due=split['interval_due'],
+                              amount_per=split['amount_per'],
+                              next_date=split['next_date'])
+        session.add(new_split)
+        session.commit()
+
+    @staticmethod
+    def get_split_info(loan_id):
+        try:
+            split = session.query(SplitLoan).filter(SplitLoan.loan_id
+                                                    == loan_id).one()
+        except NoResultFound:
+            return False
+
+        split[0].as_dict()
+        return split
+
+    @staticmethod
+    def change_next_time(split_id, next_date):
+        try:
+            split = session.query(SplitLoan).filter(SplitLoan.split_id
+                                                    == split_id).one()
+        except NoResultFound:
+            return False
+
+        split.next_date = next_date
+        session.commit()
