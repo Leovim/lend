@@ -170,3 +170,32 @@ class Behaviour(Base):
         for item in self.__table__.columns:
             c[item.name] = getattr(self, item.name)
         return c
+
+
+class SplitLoan(Base):
+    __tablename__ = 'split_loan'
+
+    split_id = Column(Integer, primary_key=True)
+    loan_id = Column(Integer, ForeignKey('loan.loan_id'))
+    total_time = Column(Integer)
+    interval_due = Column(Integer)
+    amount_per = Column(Float)
+    next_time = Column(String(20))
+
+    def __init__(self, loan_id, total_time, interval_due, amount_per, next_time):
+        self.loan_id = int(loan_id)
+        self.total_time = int(total_time)
+        self.interval_due = int(interval_due)
+        self.amount_per = amount_per
+        self.next_time = next_time
+
+    def __repr__(self):
+        return "<Behaviour('%s', '%s', '%s', '%s', '%s', '%s')>" % \
+               (self.split_id, self.loan_id, self.total_time,
+                self.interval_due, self.amount_per, self.next_time)
+
+    def as_dict(self):
+        c = dict()
+        for item in self.__table__.columns:
+            c[item.name] = getattr(self, item.name)
+        return c
