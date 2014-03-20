@@ -6,6 +6,10 @@ from models import *
 from config import options
 
 # todo 推送
+# todo 后台管理功能
+# todo 查看用户信息，查看用户贷款，查看用户行为，查看所有贷款，查看所有未完成贷款
+# todo 修改用户贷款、还款状态
+# todo 添加修改状态功能后，增加loan model中相关检查
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -182,7 +186,7 @@ class LoanHandler(BaseHandler):
                 result[i]['split_status'] = self.split_model.get_split_info(result[i]['loan_id'])
                 print result[i]['split_status']
             i += 1
-        result_json = json.dumps({'result': 1, 'loan': result},
+        result_json = json.dumps({'result': 1, 'loans': result},
                                  separators=(',', ':'), encoding="utf-8",
                                  indent=4, ensure_ascii=False)
         self.render("index.html", title="Lend", result_json=result_json)
@@ -201,7 +205,7 @@ class HistoryHandler(BaseHandler):
 
         result = self.behaviour_model.\
             get_user_new_ten_behaviours(user['user_id'])
-        result_json = json.dumps({'result': 1, 'history': result},
+        result_json = json.dumps({'result': 1, 'histories': result},
                                  separators=(',', ':'), encoding="utf-8",
                                  indent=4, ensure_ascii=False)
         self.render("index.html", title="Lend", result_json=result_json)
@@ -220,8 +224,8 @@ class GuaranteeHandler(BaseHandler):
 
         guarantor = self.guarantee_model.get_user_guarantor(user['user_id'])
         warrantee = self.guarantee_model.get_user_warrantee(user['user_id'])
-        result_json = json.dumps({'result': 1, 'guarantor': guarantor,
-                                  'warrantee': warrantee},
+        result_json = json.dumps({'result': 1, 'guarantors': guarantor,
+                                  'warrantees': warrantee},
                                  separators=(',', ':'), encoding="utf-8",
                                  indent=4, ensure_ascii=False)
         self.render("index.html", title="Lend", result_json=result_json)
@@ -457,12 +461,8 @@ class LoanRequestHandler(BaseHandler):
             return
 
         interest = self.calc_interest(loan_amount, term)
-        warrantee_num = self.guarantee_model.\
-            get_user_warrantee(user['user_id']).__len__()
-        if warrantee_num == 1:
-            interest = self.interest_round(interest * 0.9)
-        elif warrantee_num == 2:
-            interest = self.interest_round(interest * 0.8)
+        warrantee_reduce = self.loan_model.get_warrantee_reduce(user['user_id'])
+        interest = self.interest_round(interest * warrantee_reduce)
         fee = 5
         remain_amount = loan_amount + interest + fee
 
@@ -700,6 +700,30 @@ class GuaranteeRequestHandler(BaseHandler):
         guarantor = self.user_model.get_user_info(guarantor_id)
         if guarantor['status'] == 1:
             if guarantor['phone'] == phone:
+                if self.guarantee_model.get_user_guarantor(user['user_id']).__len__() > 1:
+                    # 用户已有2个担保人
+                    result_json = json.dumps({'result': 5},
+                                             separators=(',', ':'),
+                                             encoding="utf-8", indent=4,
+                                             ensure_ascii=False)
+                    self.render("index.html", title="Lend",
+                                result_json=result_json)
+                    return
+                if self.guarantee_model.get_user_warrantee(guarantor_id).__len__() > 1:
+                    # 对方不能担保2名以上用户
+                    result_json = json.dumps({'result': 6},
+                                             separators=(',', ':'),
+                                             encoding="utf-8", indent=4,
+                                             ensure_ascii=False)
+                    self.render("index.html", title="Lend",
+                                result_json=result_json)
+                    return
+
+                guarantee = dict(
+                    guarantor_id=guarantor_id,
+                    warrantee_id=user['user_id']
+                )
+                self.guarantee_model.add_guarantee(guarantee)
                 result_json = json.dumps({'result': 1},
                                          separators=(',', ':'),
                                          encoding="utf-8", indent=4,
