@@ -5,7 +5,6 @@ import tornado.web
 from models import *
 from config import options
 
-# todo 分期检验，修改get user loans
 # todo 推送
 
 
@@ -152,7 +151,6 @@ class UserHandler(BaseHandler):
 
 
 class LoanHandler(BaseHandler):
-    # todo 用户完善资料后才能借款
     def get(self):
         # user_id = 1
         user = self.get_current_user()
@@ -689,9 +687,9 @@ class GuaranteeRequestHandler(BaseHandler):
 
         guarantor_name = self.get_argument("guarantor_name", None)
         phone = self.get_argument("phone", None)
-        verify = self.get_argument("verify", None)
         guarantor_id = self.user_model.check_username_exist(guarantor_name)
         if not guarantor_id:
+            # 担保人不存在
             result_json = json.dumps({'result': 2},
                                      separators=(',', ':'),
                                      encoding="utf-8", indent=4,
@@ -702,8 +700,7 @@ class GuaranteeRequestHandler(BaseHandler):
         guarantor = self.user_model.get_user_info(guarantor_id)
         if guarantor['status'] == 1:
             if guarantor['phone'] == phone:
-                result = self.send_sms(phone, verify)
-                result_json = json.dumps({'result': result},
+                result_json = json.dumps({'result': 1},
                                          separators=(',', ':'),
                                          encoding="utf-8", indent=4,
                                          ensure_ascii=False)
@@ -711,7 +708,7 @@ class GuaranteeRequestHandler(BaseHandler):
                             result_json=result_json)
             else:
                 # 用户电话号码不匹配
-                result_json = json.dumps({'result': 2},
+                result_json = json.dumps({'result': 3},
                                          separators=(',', ':'),
                                          encoding="utf-8", indent=4,
                                          ensure_ascii=False)
@@ -719,7 +716,7 @@ class GuaranteeRequestHandler(BaseHandler):
                             result_json=result_json)
         else:
             # 该用户没有完善资料
-            result_json = json.dumps({'result': 2},
+            result_json = json.dumps({'result': 4},
                                      separators=(',', ':'),
                                      encoding="utf-8", indent=4,
                                      ensure_ascii=False)
