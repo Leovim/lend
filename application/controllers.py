@@ -344,13 +344,6 @@ class UpdateHandler(BaseHandler):
             return
 
         # 获得用户真实姓名，银行卡号，支付宝账号，身份证号，学校，院系，专业，宿舍，专业，头像（图片），三张认证照片（图片）
-        if self.request.files == {}:
-            # 没有文件上传
-            result_json = json.dumps({'result': 2}, separators=(',', ':'),
-                                     encoding="utf-8", indent=4,
-                                     ensure_ascii=False)
-            self.render("index.html", title="Lend", result_json=result_json)
-            return
 
         real_name = self.get_argument("real_name", None)
         bank_number = self.get_argument("bank_number", None)
@@ -368,38 +361,38 @@ class UpdateHandler(BaseHandler):
         image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                   "static/images/")
 
-        avatar_name = image_path + str(int(time.time() * 100)) + '.jpg'
+        avatar_name = str(int(time.time() * 100)) + '.jpg'
         avatar = self.get_argument("avatar", None)
         avatar = base64.decodestring(avatar)
-        tmp_file = open(avatar_name, "wb")
+        tmp_file = open(image_path + avatar_name, "wb")
         tmp_file.write(avatar)
         tmp_file.close()
 
-        pic1_name = image_path + str(int(time.time() * 100)) + '.jpg'
+        pic1_name = str(int(time.time() * 100)) + '.jpg'
         pic1 = self.get_argument("pic1", None)
         pic1 = base64.decodestring(pic1)
-        tmp_file = open(pic1_name, "wb")
+        tmp_file = open(image_path + pic1_name, "wb")
         tmp_file.write(pic1)
         tmp_file.close()
 
-        pic2_name = image_path + str(int(time.time() * 100)) + '.jpg'
+        pic2_name = str(int(time.time() * 100)) + '.jpg'
         pic2 = self.get_argument("pic2", None)
         pic2 = base64.decodestring(pic2)
-        tmp_file = open(pic2_name, "wb")
+        tmp_file = open(image_path + pic2_name, "wb")
         tmp_file.write(pic2)
         tmp_file.close()
 
-        pic3_name = image_path + str(int(time.time() * 100)) + '.jpg'
+        pic3_name = str(int(time.time() * 100)) + '.jpg'
         pic3 = self.get_argument("pic3", None)
         pic3 = base64.decodestring(pic3)
-        tmp_file = open(pic3_name, "wb")
+        tmp_file = open(image_path + pic3_name, "wb")
         tmp_file.write(pic3)
         tmp_file.close()
 
-        pic4_name = image_path + str(int(time.time() * 100)) + '.jpg'
+        pic4_name = str(int(time.time() * 100)) + '.jpg'
         pic4 = self.get_argument("pic4", None)
         pic4 = base64.decodestring(pic4)
-        tmp_file = open(pic4_name, "wb")
+        tmp_file = open(image_path + pic4_name, "wb")
         tmp_file.write(pic4)
         tmp_file.close()
 
