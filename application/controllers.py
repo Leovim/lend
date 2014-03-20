@@ -376,6 +376,8 @@ class UpdateHandler(BaseHandler):
         avatar = self.request.files['avatar'][0]
         pic1 = self.request.files['pic1'][0]
         pic2 = self.request.files['pic2'][0]
+        pic3 = self.request.files['pic3'][0]
+        pic4 = self.request.files['pic4'][0]
 
         tmp_file = tempfile.NamedTemporaryFile(delete=True)
         tmp_file.write(avatar['body'])
@@ -404,7 +406,6 @@ class UpdateHandler(BaseHandler):
         img.save(image_path + pic2_name)
         tmp_file.close()
 
-        pic3 = self.request.files['pic3'][0]
         tmp_file = tempfile.NamedTemporaryFile(delete=True)
         tmp_file.write(pic3['body'])
         tmp_file.seek(0)
@@ -412,6 +413,15 @@ class UpdateHandler(BaseHandler):
         image_format = pic3['filename'].split('.').pop().lower()
         pic3_name = str(int(time.time() * 100)) + '.' + image_format
         img.save(image_path + pic3_name)
+        tmp_file.close()
+
+        tmp_file = tempfile.NamedTemporaryFile(delete=True)
+        tmp_file.write(pic4['body'])
+        tmp_file.seek(0)
+        img = Image.open(tmp_file.name)
+        image_format = pic4['filename'].split('.').pop().lower()
+        pic4_name = str(int(time.time() * 100)) + '.' + image_format
+        img.save(image_path + pic4_name)
         tmp_file.close()
 
         up_user = dict(
@@ -428,7 +438,8 @@ class UpdateHandler(BaseHandler):
             avatar=avatar_name,
             pic1=pic1_name,
             pic2=pic2_name,
-            pic3=pic3_name
+            pic3=pic3_name,
+            pic4=pic4_name
         )
         self.user_model.update_user(up_user)
         result_json = json.dumps({'result': 1}, separators=(',', ':'),

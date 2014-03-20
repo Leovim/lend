@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from config import options
 
 Base = declarative_base()
-engine = create_engine(options.sqlalchemy, encoding="utf-8", pool_recycle=300)
+engine = create_engine(options.sqlalchemy, encoding="utf-8", pool_recycle=590)
 
 
 class User(Base):
@@ -30,12 +30,13 @@ class User(Base):
     pic1 = Column(String(50))
     pic2 = Column(String(50))
     pic3 = Column(String(50))
+    pic4 = Column(String(50))
 
     def __init__(self, username, password, phone, real_name=None,
                  bank_number=None, alipay_number=None, credit=1, avatar=None,
                  status=0, identify_number=None, school=None, department=None,
                  major=None, student_id=None, dorm=None, pic1=None, pic2=None,
-                 pic3=None):
+                 pic3=None, pic4=None):
         self.username = username
         self.password = password
         self.phone = phone
@@ -54,16 +55,17 @@ class User(Base):
         self.pic1 = pic1
         self.pic2 = pic2
         self.pic3 = pic3
+        self.pic4 = pic4
 
     def __repr__(self):
         return "<User('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'," \
-               " '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')>"\
-               % \
+               " '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', " \
+               "'%s')>" % \
                (self.user_id, self.username, self.password, self.phone,
                 self.real_name, self.bank_number, self.alipay_number,
                 self.credit, self.avatar, self.status, self.identify_number,
                 self.school, self.department, self.major, self.student_id,
-                self.dorm, self.pic1, self.pic2, self.pic3)
+                self.dorm, self.pic1, self.pic2, self.pic3, self.pic4)
 
     def as_dict(self):
         c = dict()

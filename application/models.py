@@ -52,6 +52,7 @@ class UserModel(BaseModel):
         #     pic1
         #     pic2
         #     pic3
+        #     pic4
         # )
         up_user = session.query(User).filter(User.user_id == user['user_id'])\
             .one()
@@ -68,6 +69,7 @@ class UserModel(BaseModel):
         up_user.pic1 = user['pic1']
         up_user.pic2 = user['pic2']
         up_user.pic3 = user['pic3']
+        up_user.pic4 = user['pic4']
         up_user.status = 1
         session.commit()
 
