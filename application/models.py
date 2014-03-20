@@ -341,7 +341,7 @@ class LoanModel(BaseModel):
         # 可能不够3个，需要做处理
         try:
             loans = session.query(Loan).filter(Loan.user_id == user_id). \
-                order_by(Loan.user_id.desc()).all()
+                filter(Loan.check_status != 2).order_by(Loan.user_id.desc()).all()
         except NoResultFound:
             return []
 
@@ -358,10 +358,26 @@ class LoanModel(BaseModel):
         return self.change_list(loans)
 
     @staticmethod
+    def get_warrantee_reduce(user_id):
+        try:
+            count = session.query(Guarantee). \
+                filter(Guarantee.guarantor_id == user_id). \
+                filter(Guarantee.status == 1).count()
+        except NoResultFound:
+            return 1
+        if count == 0:
+            return 1
+        elif count == 1:
+            return 0.9
+        elif count == 2:
+            return 0.8
+
+    @staticmethod
     def get_loan_limit(user_id):
         try:
             count = session.query(Guarantee).\
-                filter(Guarantee.warrantee_id == user_id).count()
+                filter(Guarantee.warrantee_id == user_id).\
+                filter(Guarantee.status == 1).count()
         except NoResultFound:
             return 300
         if count == 0:
