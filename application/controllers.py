@@ -6,10 +6,6 @@ from models import *
 from config import options
 
 # todo 推送
-# todo 后台管理功能
-# todo 查看用户信息，查看用户贷款，查看用户行为，查看所有贷款，查看所有未完成贷款
-# todo 修改用户贷款、还款状态
-# todo 添加修改状态功能后，增加loan model中相关检查
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -488,10 +484,12 @@ class LoanRequestHandler(BaseHandler):
         guarantor1 = None
         guarantor2 = None
         if guarantor.__len__() == 1:
-            guarantor1 = int(guarantor[0]['guarantor_id'])
+            # change to user_id
+            guarantor1 = int(guarantor[0]['user_id'])
         elif guarantor.__len__() == 2:
-            guarantor1 = int(guarantor[0]['guarantor_id'])
-            guarantor2 = int(guarantor[1]['guarantor_id'])
+            # change to user_id
+            guarantor1 = int(guarantor[0]['user_id'])
+            guarantor2 = int(guarantor[1]['user_id'])
         loan = dict(
             user_id=user['user_id'],
             # need to check
@@ -773,28 +771,17 @@ class SendSmsHandler(BaseHandler):
 
 class UploadHandler(BaseHandler):
     def post(self):
-        import tempfile
-        from PIL import Image
         import time
         import os
+        import base64
         image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                   "static/images/")
-        if self.request.files == {}:
-            result_json = json.dumps({'result': 2}, separators=(',', ':'),
-                                     encoding="utf-8", indent=4,
-                                     ensure_ascii=False)
-            self.render("index.html", title="Lend", result_json=result_json)
-            return
+        pic_name = image_path + str(int(time.time() * 100)) + '.' + self.get_argument("format", None)
+        pic = self.get_argument("pic", None)
+        pic = base64.decodestring(pic)
 
-        pic = self.request.files['pic'][0]
-
-        tmp_file = tempfile.NamedTemporaryFile(delete=True)
-        tmp_file.write(pic['body'])
-        tmp_file.seek(0)
-        img = Image.open(tmp_file.name)
-        image_format = pic['filename'].split('.').pop().lower()
-        pic_name = str(int(time.time() * 100)) + '.' + image_format
-        img.save(image_path + pic_name)
+        tmp_file = open(pic_name, "wb")
+        tmp_file.write(pic)
         tmp_file.close()
 
         result_json = json.dumps({'result': pic_name}, separators=(',', ':'),
