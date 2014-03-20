@@ -362,62 +362,45 @@ class UpdateHandler(BaseHandler):
         dorm = self.get_argument("dorm", None)
         student_id = self.get_argument("student_id", None)
 
-        import tempfile
-        from PIL import Image
+        import base64
         import time
         import os
         image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                   "static/images/")
 
-        avatar = self.request.files['avatar'][0]
-        pic1 = self.request.files['pic1'][0]
-        pic2 = self.request.files['pic2'][0]
-        pic3 = self.request.files['pic3'][0]
-        pic4 = self.request.files['pic4'][0]
-
-        tmp_file = tempfile.NamedTemporaryFile(delete=True)
-        tmp_file.write(avatar['body'])
-        tmp_file.seek(0)
-        img = Image.open(tmp_file.name)
-        image_format = avatar['filename'].split('.').pop().lower()
-        avatar_name = str(int(time.time() * 100)) + '.' + image_format
-        img.save(image_path + avatar_name)
+        avatar_name = image_path + str(int(time.time() * 100)) + '.jpg'
+        avatar = self.get_argument("avatar", None)
+        avatar = base64.decodestring(avatar)
+        tmp_file = open(avatar_name, "wb")
+        tmp_file.write(avatar)
         tmp_file.close()
 
-        tmp_file = tempfile.NamedTemporaryFile(delete=True)
-        tmp_file.write(pic1['body'])
-        tmp_file.seek(0)
-        img = Image.open(tmp_file.name)
-        image_format = pic1['filename'].split('.').pop().lower()
-        pic1_name = str(int(time.time() * 100)) + '.' + image_format
-        img.save(image_path + pic1_name)
+        pic1_name = image_path + str(int(time.time() * 100)) + '.jpg'
+        pic1 = self.get_argument("pic1", None)
+        pic1 = base64.decodestring(pic1)
+        tmp_file = open(pic1_name, "wb")
+        tmp_file.write(pic1)
         tmp_file.close()
 
-        tmp_file = tempfile.NamedTemporaryFile(delete=True)
-        tmp_file.write(pic2['body'])
-        tmp_file.seek(0)
-        img = Image.open(tmp_file.name)
-        image_format = pic2['filename'].split('.').pop().lower()
-        pic2_name = str(int(time.time() * 100)) + '.' + image_format
-        img.save(image_path + pic2_name)
+        pic2_name = image_path + str(int(time.time() * 100)) + '.jpg'
+        pic2 = self.get_argument("pic2", None)
+        pic2 = base64.decodestring(pic2)
+        tmp_file = open(pic2_name, "wb")
+        tmp_file.write(pic2)
         tmp_file.close()
 
-        tmp_file = tempfile.NamedTemporaryFile(delete=True)
-        tmp_file.write(pic3['body'])
-        tmp_file.seek(0)
-        img = Image.open(tmp_file.name)
-        image_format = pic3['filename'].split('.').pop().lower()
-        pic3_name = str(int(time.time() * 100)) + '.' + image_format
-        img.save(image_path + pic3_name)
+        pic3_name = image_path + str(int(time.time() * 100)) + '.jpg'
+        pic3 = self.get_argument("pic3", None)
+        pic3 = base64.decodestring(pic3)
+        tmp_file = open(pic3_name, "wb")
+        tmp_file.write(pic3)
         tmp_file.close()
 
-        tmp_file = tempfile.NamedTemporaryFile(delete=True)
-        tmp_file.write(pic4['body'])
-        tmp_file.seek(0)
-        img = Image.open(tmp_file.name)
-        image_format = pic4['filename'].split('.').pop().lower()
-        pic4_name = str(int(time.time() * 100)) + '.' + image_format
-        img.save(image_path + pic4_name)
+        pic4_name = image_path + str(int(time.time() * 100)) + '.jpg'
+        pic4 = self.get_argument("pic4", None)
+        pic4 = base64.decodestring(pic4)
+        tmp_file = open(pic4_name, "wb")
+        tmp_file.write(pic4)
         tmp_file.close()
 
         up_user = dict(
