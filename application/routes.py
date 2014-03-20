@@ -16,7 +16,8 @@ from controllers import \
     DueRequestHandler, \
     SplitRequestHandler, \
     GuaranteeRequestHandler, \
-    SendSmsHandler
+    SendSmsHandler, \
+    UploadHandler
 
 handlers = [
     (r"/user", UserHandler),
@@ -32,6 +33,7 @@ handlers = [
     (r"/split_request", SplitRequestHandler),
     (r"/guarantee_request", GuaranteeRequestHandler),
     (r"/send_sms", SendSmsHandler),
+    (r"/upload", UploadHandler),
     (r"/static/(.*)", tornado.web.StaticFileHandler,
      dict(path=settings['static_path'])),
     (r"/", IndexHandler),

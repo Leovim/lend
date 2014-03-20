@@ -769,3 +769,35 @@ class SendSmsHandler(BaseHandler):
                                  encoding="utf-8", indent=4,
                                  ensure_ascii=False)
         self.render("index.html", title="Lend", result_json=result_json)
+
+
+class UploadHandler(BaseHandler):
+    def post(self):
+        import tempfile
+        from PIL import Image
+        import time
+        import os
+        image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                                  "static/images/")
+        if self.request.files == {}:
+            result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+
+        pic = self.request.files['pic'][0]
+
+        tmp_file = tempfile.NamedTemporaryFile(delete=True)
+        tmp_file.write(pic['body'])
+        tmp_file.seek(0)
+        img = Image.open(tmp_file.name)
+        image_format = pic['filename'].split('.').pop().lower()
+        pic_name = str(int(time.time() * 100)) + '.' + image_format
+        img.save(image_path + pic_name)
+        tmp_file.close()
+
+        result_json = json.dumps({'result': pic_name}, separators=(',', ':'),
+                                 encoding="utf-8", indent=4,
+                                 ensure_ascii=False)
+        self.render("index.html", title="Lend", result_json=result_json)
