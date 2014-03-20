@@ -5,7 +5,7 @@ import tornado.web
 from models import *
 from config import options
 
-# todo 分期请求处理
+# todo 分期检验，修改get user loans
 # todo 推送
 
 
@@ -14,9 +14,10 @@ class BaseHandler(tornado.web.RequestHandler):
     guarantee_model = GuaranteeModel()
     loan_model = LoanModel()
     behaviour_model = BehaviourModel()
+    split_model = SplitLoanModel()
 
     def get_current_user(self):
-        user_id = self.get_secure_cookie("user")
+        user_id = self.get_secure_cookie("user", max_age_days=365)
         if not user_id:
             return None
         return self.user_model.get_user_info(int(user_id))
@@ -162,6 +163,13 @@ class LoanHandler(BaseHandler):
                                      ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
             return
+        if user['status'] == 0:
+            # 未完善资料
+            result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
 
         result = self.loan_model.get_user_new_three_loans(user['user_id'])
         i = 0
@@ -172,6 +180,9 @@ class LoanHandler(BaseHandler):
             if result[i]['guarantor2']:
                 result[i]['guarantor2'] = self.user_model. \
                     get_user_real_name(result[i]['guarantor2'])
+            if result[i]['split_status'] == 1:
+                result[i]['split_status'] = self.split_model.get_split_info(result[i]['loan_id'])
+                print result[i]['split_status']
             i += 1
         result_json = json.dumps({'result': 1, 'loan': result},
                                  separators=(',', ':'), encoding="utf-8",
@@ -242,8 +253,19 @@ class LoginHandler(BaseHandler):
             histories = self.behaviour_model.\
                 get_user_new_ten_behaviours(user_id)
             loans = self.loan_model.get_user_new_three_loans(user_id)
+            i = 0
+            while i < loans.__len__():
+                if loans[i]['guarantor1']:
+                    loans[i]['guarantor1'] = self.user_model. \
+                        get_user_real_name(loans[i]['guarantor1'])
+                if loans[i]['guarantor2']:
+                    loans[i]['guarantor2'] = self.user_model. \
+                        get_user_real_name(loans[i]['guarantor2'])
+                if loans[i]['split_status'] == 1:
+                    loans[i]['split_status'] = self.split_model.get_split_info(loans[i]['loan_id'])
+                i += 1
             # success
-            self.set_secure_cookie("user", str(user_id))
+            self.set_secure_cookie("user", str(user_id), expires_days=365)
             del user_info['password']
             user_info['loan_limit'] = \
                 self.loan_model.get_loan_limit(user_info['user_id'])
@@ -323,7 +345,7 @@ class UpdateHandler(BaseHandler):
             self.render("index.html", title="Lend", result_json=result_json)
             return
 
-        # todo 获得用户真实姓名，银行卡号，支付宝账号，身份证号，学校，院系，专业，宿舍，专业，头像（图片），三张认证照片（图片）
+        # 获得用户真实姓名，银行卡号，支付宝账号，身份证号，学校，院系，专业，宿舍，专业，头像（图片），三张认证照片（图片）
         if self.request.files == {}:
             # 没有文件上传
             result_json = json.dumps({'result': 2}, separators=(',', ':'),
@@ -503,9 +525,9 @@ class DueRequestHandler(BaseHandler):
 
         loan_id = int(self.get_argument("loan_id", None))
         term = int(self.get_argument("term", None))
-        loan = self.loan_model.get_loan_info(loan_id)
+        loan_info = self.loan_model.get_loan_info(loan_id)
         # 只能逾期两次
-        if loan['due_status'] == 2:
+        if loan_info['due_status'] == 2:
             result_json = json.dumps({'result': 2}, separators=(',', ':'),
                                      encoding="utf-8", indent=4,
                                      ensure_ascii=False)
@@ -513,14 +535,14 @@ class DueRequestHandler(BaseHandler):
             return
 
         import datetime
-        due_date_list = loan['due_date'].split('-')
+        due_date_list = loan_info['due_date'].split('-')
         due_date = datetime.date(year=int(due_date_list[0]),
                                  month=int(due_date_list[1]),
                                  day=int(due_date_list[2]))
         week = datetime.timedelta(days=7)
         due_date = (due_date + week * term).__str__()
 
-        interest = self.calc_extra_interest(loan['loan_amount'], term)
+        interest = self.calc_extra_interest(loan_info['loan_amount'], term)
         warrantee_num = self.guarantee_model. \
             get_user_warrantee(user['user_id']).__len__()
         if warrantee_num == 1:
@@ -528,18 +550,18 @@ class DueRequestHandler(BaseHandler):
         elif warrantee_num == 2:
             interest = self.interest_round(interest * 0.8)
         fee = 5
-        remain_amount = loan['remain_amount'] + interest + fee
+        remain_amount = loan_info['remain_amount'] + interest + fee
 
         # update data
-        self.loan_model.change_due_status(loan['loan_id'],
-                                          loan['due_status']+1,
+        self.loan_model.change_due_status(loan_info['loan_id'],
+                                          loan_info['due_status']+1,
                                           due_date,
                                           remain_amount)
         # create behaviour
         behaviour = dict(
-            user_id=loan['user_id'],
-            loan_id=loan['loan_id'],
-            bhv_type=loan['due_status']+4,
+            user_id=loan_info['user_id'],
+            loan_id=loan_info['loan_id'],
+            bhv_type=loan_info['due_status']+4,
             money=remain_amount,
             time=datetime.date.today().__str__(),
             check_status=1
@@ -552,11 +574,107 @@ class DueRequestHandler(BaseHandler):
 
 class SplitRequestHandler(BaseHandler):
     def post(self):
-        loan_id = self.get_argument("loan_id", None)
-        result_json = json.dumps({'result': loan_id}, separators=(',', ':'),
-                                 encoding="utf-8", indent=4,
-                                 ensure_ascii=False)
-        self.render("index.html", title="Lend", result_json=result_json)
+        user = self.get_current_user()
+        if not user:
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+
+        loan_id = int(self.get_argument("loan_id", None))
+        total_time = int(self.get_argument("total_time", None))
+        interval_due = int(self.get_argument("interval_due", None))
+
+        # 获得该loan info
+        loan_info = self.loan_model.get_loan_info(loan_id)
+
+        if loan_info['due_status'] > 0:
+            # 不能同时分期和逾期
+            result_json = json.dumps({'result': 3}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+
+        if loan_info['split_status'] == 1:
+            # 只能分期一次
+            result_json = json.dumps({'result': 4}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+
+        # 计算新的还款日期
+        import datetime
+        due_date_list = loan_info['due_date'].split('-')
+        due_date = datetime.date(year=int(due_date_list[0]),
+                                 month=int(due_date_list[1]),
+                                 day=int(due_date_list[2]))
+        week = datetime.timedelta(days=7)
+        term = total_time * interval_due
+        due_date = (due_date + week * term).__str__()
+
+        # 计算新的还款额
+        interest = self.calc_extra_interest(loan_info['loan_amount'], term)
+        warrantee_num = self.guarantee_model. \
+            get_user_warrantee(user['user_id']).__len__()
+        if warrantee_num == 1:
+            interest = self.interest_round(interest * 0.9)
+        elif warrantee_num == 2:
+            interest = self.interest_round(interest * 0.8)
+        fee = 5
+        remain_amount = loan_info['remain_amount'] + interest + fee
+
+        loan = dict(
+            loan_id=loan_info['loan_id'],
+            remain_amount=remain_amount,
+            due_date=due_date,
+        )
+
+        # 计算每次还款额
+        amount_per = self.interest_round(remain_amount/total_time)
+
+        # 计算下次还款日期
+        now_date = datetime.date(year=int(due_date_list[0]),
+                                 month=int(due_date_list[1]),
+                                 day=int(due_date_list[2]))
+        week = datetime.timedelta(days=7)
+        next_date = (now_date + week * interval_due).__str__()
+
+        split = dict(
+            loan_id=loan['loan_id'],
+            total_time=total_time,
+            interval_due=interval_due,
+            amount_per=amount_per,
+            next_date=next_date
+        )
+
+        # create behaviour
+        behaviour = dict(
+            user_id=loan_info['user_id'],
+            loan_id=loan_info['loan_id'],
+            bhv_type=3,
+            money=remain_amount,
+            time=datetime.date.today().__str__(),
+            check_status=1
+        )
+
+        # update data
+        if self.loan_model.update_loan(loan):
+            self.split_model.add_split(split)
+            self.behaviour_model.add_behaviour(behaviour)
+
+            result_json = json.dumps({'result': 1}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+        else:
+            # error
+            result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
 
 
 class GuaranteeRequestHandler(BaseHandler):
