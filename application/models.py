@@ -68,6 +68,7 @@ class UserModel(BaseModel):
         up_user.pic1 = user['pic1']
         up_user.pic2 = user['pic2']
         up_user.pic3 = user['pic3']
+        up_user.status = 1
         session.commit()
 
     @staticmethod
@@ -267,6 +268,19 @@ class LoanModel(BaseModel):
         session.delete(loan)
         session.commit()
 
+    @staticmethod
+    def update_loan(loan):
+        try:
+            up_loan = session.query(Loan).filter(Loan.loan_id ==
+                                                 loan['loan_id']).one()
+        except NoResultFound:
+            return False
+        up_loan.remain_amount = loan['remain_amount']
+        up_loan.due_date = loan['due_date']
+        up_loan.split_status = 1
+        session.commit()
+        return True
+
     # @staticmethod
     # def update_remain_amount(loan_id, remain_amount):
     #     loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
@@ -329,7 +343,7 @@ class LoanModel(BaseModel):
             loans = session.query(Loan).filter(Loan.user_id == user_id). \
                 order_by(Loan.user_id.desc()).all()
         except NoResultFound:
-            return False
+            return []
 
         if loans.__len__() == 1 or loans.__len__() == 2:
             return self.change_list(loans)
@@ -463,8 +477,7 @@ class SplitLoanModel(BaseModel):
         except NoResultFound:
             return False
 
-        split[0].as_dict()
-        return split
+        return split.as_dict()
 
     @staticmethod
     def change_next_time(split_id, next_date):
