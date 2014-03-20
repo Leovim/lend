@@ -1,4 +1,6 @@
 #coding=utf8
+import tornado.web
+from config import settings
 
 from controllers import \
     IndexHandler, \
@@ -30,5 +32,7 @@ handlers = [
     (r"/split_request", SplitRequestHandler),
     (r"/guarantee_request", GuaranteeRequestHandler),
     (r"/send_sms", SendSmsHandler),
+    (r"/static/(.*)", tornado.web.StaticFileHandler,
+     dict(path=settings['static_path'])),
     (r"/", IndexHandler),
 ]
