@@ -74,6 +74,32 @@ class UserModel(BaseModel):
         session.commit()
 
     @staticmethod
+    def update_user_info(user):
+        # user = dict(
+        #     real_name
+        #     bank_number
+        #     alipay_number
+        #     identify_number
+        #     school
+        #     department
+        #     major
+        #     dorm
+        #     student_id
+        # )
+        up_user = session.query(User).filter(User.user_id == user['user_id']) \
+            .one()
+        up_user.real_name = user['real_name']
+        up_user.bank_number = user['bank_number']
+        up_user.alipay_number = user['alipay_number']
+        up_user.identify_number = user['identify_number']
+        up_user.school = user['school']
+        up_user.department = user['department']
+        up_user.major = user['major']
+        up_user.student_id = user['student_id']
+        up_user.dorm = user['dorm']
+        session.commit()
+
+    @staticmethod
     def update_user_password(user):
         # user = dict(
         #     user_id=user_id,

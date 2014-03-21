@@ -179,7 +179,8 @@ class LoanHandler(BaseHandler):
                 result[i]['guarantor2'] = self.user_model. \
                     get_user_real_name(result[i]['guarantor2'])
             if result[i]['split_status'] == 1:
-                result[i]['split_status'] = self.split_model.get_split_info(result[i]['loan_id'])
+                result[i]['split_status'] = self.split_model.\
+                    get_split_info(result[i]['loan_id'])
                 print result[i]['split_status']
             i += 1
         result_json = json.dumps({'result': 1, 'loans': result},
@@ -260,7 +261,8 @@ class LoginHandler(BaseHandler):
                     loans[i]['guarantor2'] = self.user_model. \
                         get_user_real_name(loans[i]['guarantor2'])
                 if loans[i]['split_status'] == 1:
-                    loans[i]['split_status'] = self.split_model.get_split_info(loans[i]['loan_id'])
+                    loans[i]['split_status'] = self.split_model.\
+                        get_split_info(loans[i]['loan_id'])
                 i += 1
             # success
             self.set_secure_cookie("user", str(user_id), expires_days=365)
@@ -355,65 +357,80 @@ class UpdateHandler(BaseHandler):
         dorm = self.get_argument("dorm", None)
         student_id = self.get_argument("student_id", None)
 
-        import base64
-        import time
-        import os
-        image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
-                                  "static/images/")
+        if self.get_argument("avatar", None) == None:
+            import base64
+            import time
+            import os
+            image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                                      "static/images/")
 
-        avatar_name = str(int(time.time() * 100)) + '.jpg'
-        avatar = self.get_argument("avatar", None)
-        avatar = base64.decodestring(avatar)
-        tmp_file = open(image_path + avatar_name, "wb")
-        tmp_file.write(avatar)
-        tmp_file.close()
+            avatar_name = str(int(time.time() * 100)) + '.jpg'
+            avatar = self.get_argument("avatar", None)
+            avatar = base64.decodestring(avatar)
+            tmp_file = open(image_path + avatar_name, "wb")
+            tmp_file.write(avatar)
+            tmp_file.close()
 
-        pic1_name = str(int(time.time() * 100)) + '.jpg'
-        pic1 = self.get_argument("pic1", None)
-        pic1 = base64.decodestring(pic1)
-        tmp_file = open(image_path + pic1_name, "wb")
-        tmp_file.write(pic1)
-        tmp_file.close()
+            pic1_name = str(int(time.time() * 100)) + '.jpg'
+            pic1 = self.get_argument("pic1", None)
+            pic1 = base64.decodestring(pic1)
+            tmp_file = open(image_path + pic1_name, "wb")
+            tmp_file.write(pic1)
+            tmp_file.close()
 
-        pic2_name = str(int(time.time() * 100)) + '.jpg'
-        pic2 = self.get_argument("pic2", None)
-        pic2 = base64.decodestring(pic2)
-        tmp_file = open(image_path + pic2_name, "wb")
-        tmp_file.write(pic2)
-        tmp_file.close()
+            pic2_name = str(int(time.time() * 100)) + '.jpg'
+            pic2 = self.get_argument("pic2", None)
+            pic2 = base64.decodestring(pic2)
+            tmp_file = open(image_path + pic2_name, "wb")
+            tmp_file.write(pic2)
+            tmp_file.close()
 
-        pic3_name = str(int(time.time() * 100)) + '.jpg'
-        pic3 = self.get_argument("pic3", None)
-        pic3 = base64.decodestring(pic3)
-        tmp_file = open(image_path + pic3_name, "wb")
-        tmp_file.write(pic3)
-        tmp_file.close()
+            pic3_name = str(int(time.time() * 100)) + '.jpg'
+            pic3 = self.get_argument("pic3", None)
+            pic3 = base64.decodestring(pic3)
+            tmp_file = open(image_path + pic3_name, "wb")
+            tmp_file.write(pic3)
+            tmp_file.close()
 
-        pic4_name = str(int(time.time() * 100)) + '.jpg'
-        pic4 = self.get_argument("pic4", None)
-        pic4 = base64.decodestring(pic4)
-        tmp_file = open(image_path + pic4_name, "wb")
-        tmp_file.write(pic4)
-        tmp_file.close()
+            pic4_name = str(int(time.time() * 100)) + '.jpg'
+            pic4 = self.get_argument("pic4", None)
+            pic4 = base64.decodestring(pic4)
+            tmp_file = open(image_path + pic4_name, "wb")
+            tmp_file.write(pic4)
+            tmp_file.close()
 
-        up_user = dict(
-            user_id=user['user_id'],
-            real_name=real_name,
-            bank_number=bank_number,
-            alipay_number=alipay_number,
-            identify_number=identify_number,
-            school=school,
-            department=department,
-            major=major,
-            dorm=dorm,
-            student_id=student_id,
-            avatar=avatar_name,
-            pic1=pic1_name,
-            pic2=pic2_name,
-            pic3=pic3_name,
-            pic4=pic4_name
-        )
-        self.user_model.update_user(up_user)
+            up_user = dict(
+                user_id=user['user_id'],
+                real_name=real_name,
+                bank_number=bank_number,
+                alipay_number=alipay_number,
+                identify_number=identify_number,
+                school=school,
+                department=department,
+                major=major,
+                dorm=dorm,
+                student_id=student_id,
+                avatar=avatar_name,
+                pic1=pic1_name,
+                pic2=pic2_name,
+                pic3=pic3_name,
+                pic4=pic4_name
+            )
+            self.user_model.update_user(up_user)
+        else:
+            up_user = dict(
+                user_id=user['user_id'],
+                real_name=real_name,
+                bank_number=bank_number,
+                alipay_number=alipay_number,
+                identify_number=identify_number,
+                school=school,
+                department=department,
+                major=major,
+                dorm=dorm,
+                student_id=student_id,
+            )
+            self.user_model.update_user_info(up_user)
         result_json = json.dumps({'result': 1}, separators=(',', ':'),
                                  encoding="utf-8", indent=4,
                                  ensure_ascii=False)
@@ -685,7 +702,8 @@ class GuaranteeRequestHandler(BaseHandler):
         guarantor = self.user_model.get_user_info(guarantor_id)
         if guarantor['status'] == 1:
             if guarantor['phone'] == phone:
-                if self.guarantee_model.get_user_guarantor(user['user_id']).__len__() > 1:
+                if self.guarantee_model.get_user_guarantor(user['user_id']).\
+                        __len__() > 1:
                     # 用户已有2个担保人
                     result_json = json.dumps({'result': 5},
                                              separators=(',', ':'),
@@ -694,7 +712,8 @@ class GuaranteeRequestHandler(BaseHandler):
                     self.render("index.html", title="Lend",
                                 result_json=result_json)
                     return
-                if self.guarantee_model.get_user_warrantee(guarantor_id).__len__() > 1:
+                if self.guarantee_model.get_user_warrantee(guarantor_id).\
+                        __len__() > 1:
                     # 对方不能担保2名以上用户
                     result_json = json.dumps({'result': 6},
                                              separators=(',', ':'),
@@ -752,7 +771,8 @@ class UploadHandler(BaseHandler):
         import base64
         image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                   "static/images/")
-        pic_name = image_path + str(int(time.time() * 100)) + '.' + self.get_argument("format", None)
+        pic_name = image_path + str(int(time.time() * 100)) + '.' + \
+                   self.get_argument("format", None)
         pic = self.get_argument("pic", None)
         pic = base64.decodestring(pic)
 

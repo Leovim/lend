@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from config import options
 
 Base = declarative_base()
-engine = create_engine(options.sqlalchemy, encoding="utf-8", pool_recycle=300)
+engine = create_engine(options.sqlalchemy, encoding="utf-8", pool_recycle=3600)
 
 
 class User(Base):
@@ -184,7 +184,8 @@ class SplitLoan(Base):
     amount_per = Column(Float)
     next_date = Column(String(20))
 
-    def __init__(self, loan_id, total_time, interval_due, amount_per, next_date):
+    def __init__(self, loan_id, total_time, interval_due, amount_per,
+                 next_date):
         self.loan_id = int(loan_id)
         self.total_time = int(total_time)
         self.interval_due = int(interval_due)
