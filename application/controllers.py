@@ -527,8 +527,16 @@ class DueRequestHandler(BaseHandler):
         term = int(self.get_argument("term", None))
         loan_info = self.loan_model.get_loan_info(loan_id)
         # 只能逾期两次
-        if loan_info['due_status'] == 2:
+        if loan_info['due_status'] >= 2:
             result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+
+        if loan_info['split_status'] == 1:
+            # 逾期、分期不能同时
+            result_json = json.dumps({'result': 3}, separators=(',', ':'),
                                      encoding="utf-8", indent=4,
                                      ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
