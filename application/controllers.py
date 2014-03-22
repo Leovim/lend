@@ -357,12 +357,12 @@ class UpdateHandler(BaseHandler):
         dorm = self.get_argument("dorm", None)
         student_id = self.get_argument("student_id", None)
 
-        if self.get_argument("avatar", None) == None:
+        if self.get_argument("avatar", None) != "":
             import base64
             import time
             import os
-            image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
-                                      "static/images/")
+            image_path = os.path.join(os.path.dirname(os.path.dirname(
+                __file__)), "static/images/")
 
             avatar_name = str(int(time.time() * 100)) + '.jpg'
             avatar = self.get_argument("avatar", None)
@@ -685,6 +685,39 @@ class SplitRequestHandler(BaseHandler):
             self.render("index.html", title="Lend", result_json=result_json)
 
 
+class PayRequestHandler(BaseHandler):
+    def post(self):
+        user = self.get_current_user()
+        if not user:
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+
+        loan_id = int(self.get_argument("loan_id", None))
+        type = int(self.get_argument("type", None))
+        password = self.get_argument("password", None)
+        if type == 2:
+            pay_type = self.get_argument("bank_number", None)
+        elif type == 1:
+            pay_type = user['alipay_number']
+        elif type == 0:
+            pay_type = user['bank_number']
+        else:
+            # pay type error
+            result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+        loan_info = self.loan_model.get_loan_info(loan_id)
+        # todo 是否分期判定
+        if loan_info['split_status'] == 1:
+            split_info = self.split_model.get_split_info(loan_id)
+        # todo 新建还款行为（待审核），新建还款表数据段（待审核）
+        # todo 创建还款表，专门记录还款操作，功能：创建，修改审核状态，查询所有未审核还款，查询所有还款
+
+
 class GuaranteeRequestHandler(BaseHandler):
     def post(self):
         user = self.get_current_user()
@@ -758,6 +791,37 @@ class GuaranteeRequestHandler(BaseHandler):
                                      ensure_ascii=False)
             self.render("index.html", title="Lend",
                         result_json=result_json)
+
+
+class GuaranteeDeleteHandler(BaseHandler):
+    def post(self):
+        user = self.get_current_user()
+        if not user:
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+        type = int(self.get_argument("type", None))
+        # type == 1: the user is guarantor
+        # type == 2: the user is warrantee
+        if type == 1:
+            warrantee_id = int(self.get_argument("id", None))
+            self.guarantee_model.delete_guarantee(user['user_id'], warrantee_id)
+        elif type == 2:
+            guarantor_id = int(self.get_argument("id", None))
+            self.guarantee_model.delete_guarantee(guarantor_id, user['user_id'])
+        else:
+            # type error
+            result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+        result_json = json.dumps({'result': 1}, separators=(',', ':'),
+                                 encoding="utf-8", indent=4,
+                                 ensure_ascii=False)
+        self.render("index.html", title="Lend", result_json=result_json)
 
 
 class SendSmsHandler(BaseHandler):

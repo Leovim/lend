@@ -187,9 +187,10 @@ class GuaranteeModel(BaseModel):
         session.commit()
 
     @staticmethod
-    def delete_guarantee(guarantee_id):
+    def delete_guarantee(guarantor_id, warrantee_id):
         guarantee = session.query(Guarantee).\
-            filter(Guarantee.guarantee_id == guarantee_id).one()
+            filter(Guarantee.guarantor_id == guarantor_id).\
+            filter(Guarantee.warrantee_id == warrantee_id).one()
         session.delete(guarantee)
         session.commit()
 
