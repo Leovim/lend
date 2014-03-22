@@ -78,8 +78,8 @@ class Guarantee(Base):
     __tablename__ = 'guarantee'
 
     guarantee_id = Column(Integer, primary_key=True)
-    guarantor_id = Column(Integer, ForeignKey('user.user_id'))
-    warrantee_id = Column(Integer, ForeignKey('user.user_id'))
+    guarantor_id = Column(Integer)
+    warrantee_id = Column(Integer)
     status = Column(Integer)
 
     def __init__(self, guarantor_id, warrantee_id, status):
