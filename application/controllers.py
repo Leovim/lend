@@ -14,6 +14,7 @@ class BaseHandler(tornado.web.RequestHandler):
     loan_model = LoanModel()
     behaviour_model = BehaviourModel()
     split_model = SplitLoanModel()
+    pay_model = PayModel()
 
     def get_current_user(self):
         user_id = self.get_secure_cookie("user", max_age_days=365)
@@ -526,6 +527,14 @@ class DueRequestHandler(BaseHandler):
         loan_id = int(self.get_argument("loan_id", None))
         term = int(self.get_argument("term", None))
         loan_info = self.loan_model.get_loan_info(loan_id)
+        # 贷款尚未审核通过
+        if loan_info['check_status'] == 0:
+            result_json = json.dumps({'result': 4}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+
         # 只能逾期两次
         if loan_info['due_status'] >= 2:
             result_json = json.dumps({'result': 2}, separators=(',', ':'),
@@ -596,6 +605,14 @@ class SplitRequestHandler(BaseHandler):
 
         # 获得该loan info
         loan_info = self.loan_model.get_loan_info(loan_id)
+
+        # 贷款尚未审核通过
+        if loan_info['check_status'] == 0:
+            result_json = json.dumps({'result': 5}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
 
         if loan_info['due_status'] > 0:
             # 不能同时分期和逾期
@@ -710,12 +727,40 @@ class PayRequestHandler(BaseHandler):
                                      encoding="utf-8", indent=4,
                                      ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
+            return
         loan_info = self.loan_model.get_loan_info(loan_id)
+        # 新建还款行为（待审核）
+        import datetime
+        behaviour = dict(
+            user_id=loan_info['user_id'],
+            loan_id=loan_info['loan_id'],
+            bhv_type=2,
+            money=loan_info['remain_amount'],
+            time=datetime.date.today().__str__(),
+            check_status=0
+        )
+        # todo 新建还款表数据段（待审核）
+        pay = dict(
+            loan_id=loan_info['loan_id'],
+            type=pay_type,
+            amount=loan_info['remain_amount'],
+            date=datetime.date.today().__str__(),
+            check_status=0,
+        )
         # todo 是否分期判定
         if loan_info['split_status'] == 1:
             split_info = self.split_model.get_split_info(loan_id)
-        # todo 新建还款行为（待审核），新建还款表数据段（待审核）
+            behaviour['money'] = split_info['amount_per']
+            pay['amount'] = split_info['amount_per']
         # todo 创建还款表，专门记录还款操作，功能：创建，修改审核状态，查询所有未审核还款，查询所有还款
+        # update remain amount
+        self.loan_model.update_remain_amount(loan_info['loan_id'],
+                                             loan_info['remain_amount']-
+                                             pay['amount'])
+        # add bhv
+        self.behaviour_model.add_behaviour(behaviour)
+        # add pay
+        self.pay_model.add_pay(pay)
 
 
 class GuaranteeRequestHandler(BaseHandler):

@@ -202,3 +202,32 @@ class SplitLoan(Base):
         for item in self.__table__.columns:
             c[item.name] = getattr(self, item.name)
         return c
+
+
+class Pay(Base):
+    __tablename__ = 'pay'
+
+    pay_id = Column(Integer, primary_key=True)
+    loan_id = Column(Integer, ForeignKey('loan.loan_id'))
+    type = Column(String(40))
+    amount = Column(Float)
+    check_status = Column(Integer)
+    date = Column(String(20))
+
+    def __init__(self, loan_id, type, amount, check_status, date):
+        self.loan_id = int(loan_id)
+        self.type = type
+        self.amount = amount
+        self.check_status = check_status
+        self.date = date
+
+    def __repr__(self):
+        return "<Behaviour('%s', '%s', '%s', '%s', '%s', '%s')>" % \
+               (self.pay_id, self.loan_id, self.type,
+                self.amount, self.check_status, self.date)
+
+    def as_dict(self):
+        c = dict()
+        for item in self.__table__.columns:
+            c[item.name] = getattr(self, item.name)
+        return c
