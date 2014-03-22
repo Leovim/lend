@@ -15,6 +15,7 @@ from controllers import \
     LoanRequestHandler, \
     DueRequestHandler, \
     SplitRequestHandler, \
+    PayRequestHandler, \
     GuaranteeRequestHandler, \
     GuaranteeDeleteHandler, \
     SendSmsHandler, \
@@ -32,6 +33,7 @@ handlers = [
     (r"/loan_request", LoanRequestHandler),
     (r"/due_request", DueRequestHandler),
     (r"/split_request", SplitRequestHandler),
+    (r"/pay_request", PayRequestHandler),
     (r"/guarantee_request", GuaranteeRequestHandler),
     (r"/guarantee_delete", GuaranteeDeleteHandler),
     (r"/send_sms", SendSmsHandler),
