@@ -310,12 +310,12 @@ class LoanModel(BaseModel):
         session.commit()
         return True
 
-    # @staticmethod
-    # def update_remain_amount(loan_id, remain_amount):
-    #     loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
-    #     loan.remain_amount = int(remain_amount)
-    #     session.commit()
-    #
+    @staticmethod
+    def update_remain_amount(loan_id, remain_amount):
+        loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
+        loan.remain_amount = remain_amount
+        session.commit()
+
     # @staticmethod
     # def update_due_date(loan_id, due_date):
     #     loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
@@ -534,3 +534,45 @@ class SplitLoanModel(BaseModel):
 
         split.next_date = next_date
         session.commit()
+
+
+class PayModel(BaseModel):
+    @staticmethod
+    def add_pay(pay):
+        new_pay = Pay(loan_id=pay['loan_id'],
+                      type=pay['type'],
+                      amount=pay['amount'],
+                      check_status=pay['check_status'],
+                      date=pay['date'])
+        session.add(new_pay)
+        session.commit()
+
+    def update_check_status(self, pay_id):
+        try:
+            pay = session.query(Pay).filter(Pay.pay_id == pay_id).one()
+        except NoResultFound:
+            return False
+        pay.check_status = 1
+        session.commit()
+        return True
+
+    def get_pay_info(self, loan_id):
+        try:
+            pay = session.query(Pay).filter(Pay.loan_id == loan_id).all()
+        except NoResultFound:
+            return []
+        return self.change_list(pay)
+
+    def get_all_unchecked_pay(self):
+        try:
+            pay = session.query(Pay).filter(Pay.check_status == 0).all()
+        except NoResultFound:
+            return []
+        return self.change_list(pay)
+
+    def get_all_pay(self):
+        try:
+            pay = session.query(Pay).all()
+        except NoResultFound:
+            return []
+        return self.change_list(pay)
