@@ -333,9 +333,7 @@ class LoanModel(BaseModel):
     @staticmethod
     def change_split_status(loan_id, status):
         # status: 0 未分期
-        #         1 分期一次
-        #         2 两次
-        #         3 三次
+        #         1 分期
         loan = session.query(Loan).filter(Loan.loan_id == loan_id).one()
         loan.split_status = int(status)
         session.commit()
@@ -370,7 +368,8 @@ class LoanModel(BaseModel):
         # 可能不够3个，需要做处理
         try:
             loans = session.query(Loan).filter(Loan.user_id == user_id). \
-                filter(Loan.check_status != 2).order_by(Loan.user_id.desc()).all()
+                filter(Loan.check_status != 2).order_by(Loan.user_id.desc()).\
+                all()
         except NoResultFound:
             return []
 

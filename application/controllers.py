@@ -739,7 +739,7 @@ class PayRequestHandler(BaseHandler):
             time=datetime.date.today().__str__(),
             check_status=0
         )
-        # todo 新建还款表数据段（待审核）
+        # 新建还款表数据段（待审核）
         pay = dict(
             loan_id=loan_info['loan_id'],
             type=pay_type,
@@ -747,12 +747,20 @@ class PayRequestHandler(BaseHandler):
             date=datetime.date.today().__str__(),
             check_status=0,
         )
-        # todo 是否分期判定
+        # 是否分期判定
         if loan_info['split_status'] == 1:
             split_info = self.split_model.get_split_info(loan_id)
             behaviour['money'] = split_info['amount_per']
             pay['amount'] = split_info['amount_per']
-        # todo 创建还款表，专门记录还款操作，功能：创建，修改审核状态，查询所有未审核还款，查询所有还款
+            # update split next_date
+            import datetime
+            date_list = split_info['next_date'].split('-')
+            next_date = datetime.date(year=date_list[0], month=date_list[1],
+                                      day=date_list[2])
+            week = datetime.timedelta(days=7)
+            next_date = (next_date + week * split_info['interval_due']).\
+                __str__()
+            self.split_model.change_next_time(split_info['split_id'], next_date)
         # update remain amount
         self.loan_model.update_remain_amount(loan_info['loan_id'],
                                              loan_info['remain_amount']-
@@ -761,6 +769,11 @@ class PayRequestHandler(BaseHandler):
         self.behaviour_model.add_behaviour(behaviour)
         # add pay
         self.pay_model.add_pay(pay)
+
+        result_json = json.dumps({'result': 1}, separators=(',', ':'),
+                                 encoding="utf-8", indent=4,
+                                 ensure_ascii=False)
+        self.render("index.html", title="Lend", result_json=result_json)
 
 
 class GuaranteeRequestHandler(BaseHandler):
