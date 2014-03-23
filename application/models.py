@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import *
 from db import *
 
-Session = sessionmaker(bind=engine)
+Session = sessionmaker(bind=engine, autocommit=True)
 session = Session()
 
 
@@ -489,8 +489,7 @@ class BehaviourModel(BaseModel):
             return self.change_list(behaviours)
         else:
             return self.change_list(behaviours[0:10])
-        pass
-    
+
     def get_all_unchecked_behaviours(self):
         try:
             behaviours = session.query(Behaviour).\
