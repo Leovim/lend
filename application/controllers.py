@@ -124,15 +124,6 @@ class BaseHandler(tornado.web.RequestHandler):
         return a.read()
 
 
-class IndexHandler(BaseHandler):
-    def get(self, arg):
-        result_json = json.dumps([arg, {'name': "Leo中文", 'age': 20},
-                                  {'name': "Smith", 'age': 17}],
-                                 separators=(',', ':'), encoding="utf-8",
-                                 indent=4, ensure_ascii=False)
-        self.render("index.html", title="Lend", result_json=result_json)
-
-
 class UserHandler(BaseHandler):
     def get(self):
         user = self.get_current_user()
@@ -716,6 +707,7 @@ class PayRequestHandler(BaseHandler):
         type = int(self.get_argument("type", None))
         password = self.get_argument("password", None)
 
+
         # password check
         import hashlib
         sha = hashlib.sha1()
@@ -743,6 +735,7 @@ class PayRequestHandler(BaseHandler):
             return
         loan_info = self.loan_model.get_loan_info(loan_id)
         # 新建还款行为（待审核）
+
         import datetime
         behaviour = dict(
             user_id=loan_info['user_id'],
