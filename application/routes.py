@@ -3,7 +3,6 @@ import tornado.web
 from config import settings
 
 from controllers import \
-    IndexHandler, \
     UserHandler, \
     LoanHandler, \
     HistoryHandler, \
@@ -21,6 +20,16 @@ from controllers import \
     PasswordHandler, \
     SendSmsHandler, \
     UploadHandler
+
+from admin import \
+    IndexHandler, \
+    AdminLoginHandler, \
+    AdminAuthenticateHandler, \
+    AdminUserHandler, \
+    AdminGuaranteeHandler, \
+    AdminGuaranteeCheckHandler, \
+    AdminLoanHandler, \
+    AdminLoanCheckHandler
 
 handlers = [
     (r"/user", UserHandler),
@@ -42,5 +51,12 @@ handlers = [
     (r"/upload", UploadHandler),
     (r"/static/(.*)", tornado.web.StaticFileHandler,
      dict(path=settings['static_path'])),
-    (r"/", IndexHandler),
+    (r"/nimda/login", AdminLoginHandler),
+    (r"/nimda/authenticate", AdminAuthenticateHandler),
+    (r"/nimda/user/([0-9]*)", AdminUserHandler),
+    (r"/nimda/guarantee", AdminGuaranteeHandler),
+    (r"/nimda/guarantee_check/([0-9]*)", AdminGuaranteeCheckHandler),
+    (r"/nimda/loan", AdminLoanHandler),
+    (r"/nimda/loan_check/([0-9]*)", AdminLoanCheckHandler),
+    (r"/nimda/", IndexHandler),
 ]
