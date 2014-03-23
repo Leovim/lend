@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>贷款</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap-theme.min.css">
+</head>
+<body>
+<div class="container">
+    <h2>贷款请求（待审核）</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>贷款ID</th>
+            <th>用户</th>
+            <th>担保人1</th>
+            <th>担保人2</th>
+            <th>贷款数额</th>
+            <th>待还数额</th>
+            <th>贷款日期</th>
+            <th>还款日期</th>
+            <th>审核</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1</td>
+            <td><a href="/nimda/user/10">刘长通</a></td>
+            <td><a href="/nimda/user/11">路少德</a></td>
+            <td><a href="#">无</a></td>
+            <td>100</td>
+            <td>105</td>
+            <td>2014-03-30</td>
+            <td>2014-04-30</td>
+            <td><a class="btn btn-primary" href="/nimda/loan_check/1">通过</a></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td><a href="/nimda/user/10">刘长通</a></td>
+            <td><a href="/nimda/user/11">路少德</a></td>
+            <td><a href="#">无</a></td>
+            <td>100</td>
+            <td>105</td>
+            <td>2014-03-30</td>
+            <td>2014-04-30</td>
+            <td><a class="btn btn-primary" href="/nimda/loan_check/2">通过</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <br />
+    <h2>贷款（正在进行）</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>贷款ID</th>
+            <th>用户</th>
+            <th>担保人1</th>
+            <th>担保人2</th>
+            <th>贷款数额</th>
+            <th>待还数额</th>
+            <th>贷款日期</th>
+            <th>还款日期</th>
+            <th>分期情况</th>
+            <th>逾期情况</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>3</td>
+            <td><a href="/nimda/user/10">刘长通</a></td>
+            <td><a href="/nimda/user/11">路少德</a></td>
+            <td><a href="#">无</a></td>
+            <td>100</td>
+            <td>115</td>
+            <td>2014-03-30</td>
+            <td>2014-04-30</td>
+            <td>分期0次</td>
+            <td>逾期2次</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td><a href="/nimda/user/10">刘长通</a></td>
+            <td><a href="/nimda/user/11">路少德</a></td>
+            <td><a href="#">无</a></td>
+            <td>100</td>
+            <td>105</td>
+            <td>2014-03-30</td>
+            <td>2014-04-30</td>
+            <td>分期0次</td>
+            <td>逾期0次</td>
+        </tr>
+        </tbody>
+    </table>
+    <br />
+    <h2>贷款（已完成）</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>贷款ID</th>
+            <th>用户</th>
+            <th>担保人1</th>
+            <th>担保人2</th>
+            <th>贷款数额</th>
+            <th>贷款日期</th>
+            <th>还款日期</th>
+            <th>分期情况</th>
+            <th>逾期情况</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>3</td>
+            <td><a href="/nimda/user/10">刘长通</a></td>
+            <td><a href="/nimda/user/11">路少德</a></td>
+            <td><a href="#">无</a></td>
+            <td>100</td>
+            <td>2014-03-30</td>
+            <td>2014-04-30</td>
+            <td>分期0次</td>
+            <td>逾期2次</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td><a href="/nimda/user/10">刘长通</a></td>
+            <td><a href="/nimda/user/11">路少德</a></td>
+            <td><a href="#">无</a></td>
+            <td>100</td>
+            <td>2014-03-30</td>
+            <td>2014-04-30</td>
+            <td>分期0次</td>
+            <td>逾期0次</td>
+        </tr>
+        </tbody>
+    </table>
+</div> <!-- /container -->
+<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+</body>
+</html>
