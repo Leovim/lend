@@ -715,6 +715,19 @@ class PayRequestHandler(BaseHandler):
         loan_id = int(self.get_argument("loan_id", None))
         type = int(self.get_argument("type", None))
         password = self.get_argument("password", None)
+
+        # password check
+        import hashlib
+        sha = hashlib.sha1()
+        sha.update(password)
+        sha_password = sha.hexdigest()
+        if sha_password != user['password']:
+            result_json = json.dumps({'result': 3}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+
         if type == 2:
             pay_type = self.get_argument("bank_number", None)
         elif type == 1:
@@ -876,6 +889,28 @@ class GuaranteeDeleteHandler(BaseHandler):
                                      ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
             return
+        result_json = json.dumps({'result': 1}, separators=(',', ':'),
+                                 encoding="utf-8", indent=4,
+                                 ensure_ascii=False)
+        self.render("index.html", title="Lend", result_json=result_json)
+
+
+class PasswordHandler(BaseHandler):
+    def post(self):
+        user = self.get_current_user()
+        if not user:
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+        password = self.get_argument("password", None)
+
+        import hashlib
+        sha = hashlib.sha1()
+        sha.update(password)
+        sha_password = sha.hexdigest()
+        self.user_model.update_user_password(user['user_id'], sha_password)
         result_json = json.dumps({'result': 1}, separators=(',', ':'),
                                  encoding="utf-8", indent=4,
                                  ensure_ascii=False)

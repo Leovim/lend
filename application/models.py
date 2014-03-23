@@ -100,14 +100,13 @@ class UserModel(BaseModel):
         session.commit()
 
     @staticmethod
-    def update_user_password(user):
+    def update_user_password(user_id, password):
         # user = dict(
         #     user_id=user_id,
         #     password=password
         # )
-        up_user = session.query(User).filter(User.user_id == user['user_id'])\
-            .one()
-        up_user.password = user['password']
+        up_user = session.query(User).filter(User.user_id == user_id).one()
+        up_user.password = password
         session.commit()
 
     @staticmethod

@@ -18,6 +18,7 @@ from controllers import \
     PayRequestHandler, \
     GuaranteeRequestHandler, \
     GuaranteeDeleteHandler, \
+    PasswordHandler, \
     SendSmsHandler, \
     UploadHandler
 
@@ -36,6 +37,7 @@ handlers = [
     (r"/pay_request", PayRequestHandler),
     (r"/guarantee_request", GuaranteeRequestHandler),
     (r"/guarantee_delete", GuaranteeDeleteHandler),
+    (r"/password", PasswordHandler),
     (r"/send_sms", SendSmsHandler),
     (r"/upload", UploadHandler),
     (r"/static/(.*)", tornado.web.StaticFileHandler,
