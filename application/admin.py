@@ -70,7 +70,33 @@ class AdminLoanHandler(BaseHandler):
 class AdminGuaranteeHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        self.render("nimda/guarantee.html")
+        guarantee = self.guarantee_model.get_all_guarantee()
+        unchecked_guarantee = self.guarantee_model.get_all_unchecked_guarantee()
+        for i, item in enumerate(guarantee):
+            guarantor_info = self.user_model.\
+                get_user_info(guarantee[i]['guarantor_id'])
+            guarantee[i]['guarantor_name'] = guarantor_info['real_name']
+            warrantee_info = self.user_model.\
+                get_user_info(guarantee[i]['warrantee_id'])
+            guarantee[i]['warrantee_name'] = warrantee_info['real_name']
+        for i, item in enumerate(unchecked_guarantee):
+            guarantor_info = self.user_model.\
+                get_user_info(unchecked_guarantee[i]['guarantor_id'])
+            unchecked_guarantee[i]['guarantor_name'] = \
+                guarantor_info['real_name']
+            warrantee_info = self.user_model.\
+                get_user_info(unchecked_guarantee[i]['warrantee_id'])
+            unchecked_guarantee[i]['warrantee_name'] = \
+                warrantee_info['real_name']
+        self.render("nimda/guarantee.html", guarantee=guarantee,
+                    unchecked_guarantee=unchecked_guarantee)
+
+
+class AdminGuaranteeCheckHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, guarantee_id):
+        self.guarantee_model.change_status(guarantee_id)
+        self.redirect("nimda/guarantee")
 
 
 class AdminLoanCheckHandler(BaseHandler):
@@ -83,17 +109,11 @@ class AdminLoanCheckHandler(BaseHandler):
 class AdminPayHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        pass
+        self.render("nimda/pay.html")
 
 
 class AdminPayCheckHandler(BaseHandler):
     @tornado.web.authenticated
     def post(self):
         loan_id = int(self.get_argument("loan_id", None))
-        pass
-
-
-class AdminGuaranteeCheckHandler(BaseHandler):
-    @tornado.web.authenticated
-    def get(self, guarantee_id):
         pass

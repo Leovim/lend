@@ -18,36 +18,14 @@
         </tr>
         </thead>
         <tbody>
+        {% for item in unchecked_guarantee %}
         <tr>
-            <td>1</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a class="btn btn-primary" href="/nimda/guarantee_check/1">通过</a></td>
+            <td>{{ item['guarantee_id'] }}</td>
+            <td><a href="/nimda/user/{{ item['guarantor_id'] }}">{{ item['guarantor_name'] }}</a></td>
+            <td><a href="/nimda/user/{{ item['warrantee_id'] }}">{{ item['warrantee_name'] }}</a></td>
+            <td><a class="btn btn-primary" href="/nimda/guarantee_check/{{ item['guarantee_id'] }}">通过</a></td>
         </tr>
-        </tbody>
-        <tbody>
-        <tr>
-            <td>2</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a class="btn btn-primary" href="/nimda/guarantee_check/1">通过</a></td>
-        </tr>
-        </tbody>
-        <tbody>
-        <tr>
-            <td>3</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a class="btn btn-primary" href="/nimda/guarantee_check/1">通过</a></td>
-        </tr>
-        </tbody>
-        <tbody>
-        <tr>
-            <td>4</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a class="btn btn-primary" href="/nimda/guarantee_check/1">通过</a></td>
-        </tr>
+        {% end %}
         </tbody>
     </table>
     <br />
@@ -61,32 +39,13 @@
         </tr>
         </thead>
         <tbody>
+        {% for item in guarantee %}
         <tr>
-            <td>1</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
+            <td>{{ item['guarantee_id'] }}</td>
+            <td><a href="/nimda/user/{{ item['guarantor_id'] }}">{{ item['guarantor_name'] }}</a></td>
+            <td><a href="/nimda/user/{{ item['warrantee_id'] }}">{{ item['warrantee_name'] }}</a></td>
         </tr>
-        </tbody>
-        <tbody>
-        <tr>
-            <td>2</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-        </tr>
-        </tbody>
-        <tbody>
-        <tr>
-            <td>3</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-        </tr>
-        </tbody>
-        <tbody>
-        <tr>
-            <td>4</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-        </tr>
+        {% end %}
         </tbody>
     </table>
 </div> <!-- /container -->
