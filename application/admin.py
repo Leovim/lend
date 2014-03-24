@@ -21,15 +21,15 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def get_current_user(self):
         user_id = self.get_secure_cookie("user", max_age_days=365)
-        if not user_id:
-            return None
-        return True
+        if user_id == '0':
+            return True
+        return False
 
 
 class IndexHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        self.redirect("/loan")
+        self.redirect("/nimda/loan")
 
 
 class AdminLoginHandler(BaseHandler):
@@ -37,21 +37,21 @@ class AdminLoginHandler(BaseHandler):
         self.render("nimda/login.html")
 
 
+class AdminLogoutHandler(BaseHandler):
+    def get(self):
+        self.clear_cookie('user')
+        self.redirect("/nimda/login")
+
+
 class AdminAuthenticateHandler(BaseHandler):
     def post(self):
         username = self.get_argument("username", None)
         password = self.get_argument("password", None)
         if username == options.admin and password == options.password:
-            self.set_secure_cookie("user", str(username), expires_days=365)
-            result_json = json.dumps({'result': 1}, separators=(',', ':'),
-                                     encoding="utf-8", indent=4,
-                                     ensure_ascii=False)
-            self.render("index.html", result_json=result_json)
+            self.set_secure_cookie("user", str(0), expires_days=365)
+            self.redirect("/nimda/loan")
         else:
-            result_json = json.dumps({'result': 0}, separators=(',', ':'),
-                                     encoding="utf-8", indent=4,
-                                     ensure_ascii=False)
-            self.render("index.html", result_json=result_json)
+            self.render("index.html", result_json="用户名或密码错误")
 
 
 class AdminUserHandler(BaseHandler):
@@ -103,6 +103,9 @@ class AdminLoanHandler(BaseHandler):
             if item['guarantor2']:
                 guarantor2 = self.user_model.get_user_info(item['guarantor2'])
                 loans[i]['guarantor2_name'] = guarantor2['real_name']
+            if item['split_status'] == 1:
+                split_info = self.split_model.get_split_info(item['loan_id'])
+                loans[i]['split_status'] = split_info
         for i, item in enumerate(complete_loans):
             complete_loans[i]['guarantor1_name'] = None
             complete_loans[i]['guarantor2_name'] = None
@@ -121,7 +124,7 @@ class AdminLoanCheckHandler(BaseHandler):
     def get(self, loan_id):
         loan_id = int(loan_id)
         self.loan_model.change_check_status(loan_id, 1)
-        self.redirect("/loan")
+        self.redirect("/nimda/loan")
 
 
 class AdminGuaranteeHandler(BaseHandler):
@@ -154,7 +157,7 @@ class AdminGuaranteeCheckHandler(BaseHandler):
     def get(self, guarantee_id):
         guarantee_id = int(guarantee_id)
         self.guarantee_model.change_status(guarantee_id)
-        self.redirect("nimda/guarantee")
+        self.redirect("/nimda/guarantee")
 
 
 class AdminPayHandler(BaseHandler):

@@ -405,14 +405,24 @@ class LoanModel(BaseModel):
 
     def get_all_unchecked_loans(self):
         try:
-            loans = session.query(Loan).filter(Loan.check_status == 0).all()
+            loans = session.query(Loan).filter(Loan.check_status == 0)\
+                .order_by(Loan.loan_id.desc()).all()
         except NoResultFound:
             return []
         return self.change_list(loans)
 
-    def get_all_loans(self):
+    def get_all_ing_loans(self):
         try:
-            loans = session.query(Loan).order_by(Loan.loan_id.desc()).all()
+            loans = session.query(Loan).filter(Loan.check_status == 1)\
+                .order_by(Loan.loan_id.desc()).all()
+        except NoResultFound:
+            return []
+        return self.change_list(loans)
+
+    def get_all_complete_loans(self):
+        try:
+            loans = session.query(Loan).filter(Loan.check_status == 2)\
+                .order_by(Loan.loan_id.desc()).all()
         except NoResultFound:
             return []
         return self.change_list(loans)

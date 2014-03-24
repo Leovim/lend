@@ -24,12 +24,15 @@ from controllers import \
 from admin import \
     IndexHandler, \
     AdminLoginHandler, \
+    AdminLogoutHandler, \
     AdminAuthenticateHandler, \
     AdminUserHandler, \
     AdminGuaranteeHandler, \
     AdminGuaranteeCheckHandler, \
     AdminLoanHandler, \
-    AdminLoanCheckHandler
+    AdminLoanCheckHandler, \
+    AdminPayHandler, \
+    AdminPayCheckHandler
 
 handlers = [
     (r"/user", UserHandler),
@@ -52,11 +55,14 @@ handlers = [
     (r"/static/(.*)", tornado.web.StaticFileHandler,
      dict(path=settings['static_path'])),
     (r"/nimda/login", AdminLoginHandler),
+    (r"/nimda/logout", AdminLogoutHandler),
     (r"/nimda/authenticate", AdminAuthenticateHandler),
     (r"/nimda/user/([0-9]*)", AdminUserHandler),
     (r"/nimda/guarantee", AdminGuaranteeHandler),
     (r"/nimda/guarantee_check/([0-9]*)", AdminGuaranteeCheckHandler),
     (r"/nimda/loan", AdminLoanHandler),
     (r"/nimda/loan_check/([0-9]*)", AdminLoanCheckHandler),
+    (r"/nimda/pay", AdminPayHandler),
+    (r"/nimda/pay_check/([0-9]*)", AdminPayCheckHandler),
     (r"/nimda/", IndexHandler),
 ]
