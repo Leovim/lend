@@ -58,7 +58,24 @@ class AdminUserHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, user_id):
         user_info = self.user_model.get_user_info(user_id)
-        self.render("nimda/user.html")
+        loans = self.loan_model.get_user_all_loans(user_id)
+        for i, item in enumerate(loans):
+            if item['check_status'] == 0:
+                loans[i]['check_status'] = "待审核"
+            elif item['check_status'] == 1:
+                loans[i]['check_status'] = "正常"
+            elif item['check_status'] == 2:
+                loans[i]['check_status'] = "已完成"
+
+            loans[i]['guarantor1_name'] = None
+            loans[i]['guarantor2_name'] = None
+            if item['guarantor1']:
+                guarantor1 = self.user_model.get_user_info(item['guarantor1'])
+                loans[i]['guarantor1_name'] = guarantor1['real_name']
+            if item['guarantor2']:
+                guarantor2 = self.user_model.get_user_info(item['guarantor2'])
+                loans[i]['guarantor2_name'] = guarantor2['real_name']
+        self.render("nimda/user.html", user_info=user_info, loans=loans)
 
 
 class AdminLoanHandler(BaseHandler):

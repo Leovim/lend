@@ -12,41 +12,69 @@
 </head>
 <body>
 <div class="container">
-    <img width="100" src="/static/images/139499223849.png" alt="avatar"/>
+    <img width="100" src="/static/images/{{ user_info['avatar'] }}" alt="avatar"/>
     <table class="table table-striped">
         <tbody>
         <tr>
             <td>用户名</td>
-            <td>sdlu</td>
+            <td>{{ user_info['username'] }}</td>
+        </tr>
+        <tr>
+            <td>电话</td>
+            <td>{{ user_info['phone'] }}</td>
         </tr>
         <tr>
             <td>真实姓名</td>
-            <td>路少德</td>
+            <td>{{ user_info['real_name'] }}</td>
         </tr>
         <tr>
             <td>银行卡号</td>
-            <td>122334455343</td>
+            <td>{{ user_info['bank_number'] }}</td>
         </tr>
         <tr>
             <td>支付宝账号</td>
-            <td>11@ht.com</td>
+            <td>{{ user_info['alipay_number'] }}</td>
+        </tr>
+        <tr>
+            <td>身份证号</td>
+            <td>{{ user_info['identify_number'] }}</td>
+        </tr>
+        <tr>
+            <td>学校</td>
+            <td>{{ user_info['school'] }}</td>
+        </tr>
+        <tr>
+            <td>学院</td>
+            <td>{{ user_info['department'] }}</td>
+        </tr>
+        <tr>
+            <td>专业</td>
+            <td>{{ user_info['major'] }}</td>
+        </tr>
+        <tr>
+            <td>宿舍</td>
+            <td>{{ user_info['dorm'] }}</td>
+        </tr>
+        <tr>
+            <td>学号</td>
+            <td>{{ user_info['student_id'] }}</td>
         </tr>
         </tbody>
     </table>
-    <a href="/static/images/139499223849.png"><img width="500" src="/static/images/139499223849.png" alt="pic1"/></a>
-    <a href="/static/images/139499223849.png"><img width="500" src="/static/images/139499223849.png" alt="pic1"/></a>
-    <a href="/static/images/139499223849.png"><img width="500" src="/static/images/139499223849.png" alt="pic1"/></a>
-    <a href="/static/images/139499223849.png"><img width="500" src="/static/images/139499223849.png" alt="pic1"/></a>
+    <a href="/static/images/{{ user_info['pic1'] }}"><img width="500" src="/static/images/{{ user_info['pic1'] }}" alt="pic1"/></a>
+    <a href="/static/images/{{ user_info['pic2'] }}"><img width="500" src="/static/images/{{ user_info['pic2'] }}" alt="pic2"/></a>
+    <a href="/static/images/{{ user_info['pic3'] }}"><img width="500" src="/static/images/{{ user_info['pic3'] }}" alt="pic3"/></a>
+    <a href="/static/images/{{ user_info['pic4'] }}"><img width="500" src="/static/images/{{ user_info['pic4'] }}" alt="pic4"/></a>
     <br />
     <h2>贷款</h2>
     <table class="table table-striped">
         <thead>
         <tr>
             <th>贷款ID</th>
-            <th>用户</th>
             <th>担保人1</th>
             <th>担保人2</th>
             <th>贷款数额</th>
+            <th>待还数额</th>
             <th>贷款日期</th>
             <th>还款日期</th>
             <th>分期情况</th>
@@ -55,42 +83,20 @@
         </tr>
         </thead>
         <tbody>
+        {% for loan in loans %}
         <tr>
-            <td>4</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a href="#">无</a></td>
-            <td>100</td>
-            <td>2014-03-30</td>
-            <td>2014-04-30</td>
-            <td>分期0次</td>
-            <td>逾期0次</td>
-            <td>待审核</td>
+            <td>{{ loan['loan_id'] }}</td>
+            <td><a href="/nimda/user/{{ loan['guarantor1'] }}">{{ loan['guarantor1_name'] }}</a></td>
+            <td><a href="/nimda/user/{{ loan['guarantor2'] }}">{{ loan['guarantor1_name'] }}</a></td>
+            <td>{{ loan['loan_amount'] }}</td>
+            <td>{{ loan['remain_amount'] }}</td>
+            <td>{{ loan['loan_date'] }}</td>
+            <td>{{ loan['due_date'] }}</td>
+            <td>分期{{ loan['split_status'] }}次</td>
+            <td>逾期{{ loan['due_status'] }}次</td>
+            <td>{{ loan['check_status'] }}</td>
         </tr>
-        <tr>
-            <td>3</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a href="#">无</a></td>
-            <td>100</td>
-            <td>2014-03-30</td>
-            <td>2014-04-30</td>
-            <td>分期0次</td>
-            <td>逾期2次</td>
-            <td>正在进行</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a href="#">无</a></td>
-            <td>100</td>
-            <td>2014-03-30</td>
-            <td>2014-04-30</td>
-            <td>分期0次</td>
-            <td>逾期2次</td>
-            <td>已完成</td>
-        </tr>
+        {% end %}
         </tbody>
     </table>
 </div> <!-- /container -->
