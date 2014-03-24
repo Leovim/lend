@@ -610,9 +610,9 @@ class PayModel(BaseModel):
             return []
         return self.change_list(pay)
 
-    def get_all_pay(self):
+    def get_all_complete_pay(self):
         try:
-            pay = session.query(Pay).all()
+            pay = session.query(Pay).filter(Pay.check_status == 1).all()
         except NoResultFound:
             return []
         return self.change_list(pay)
