@@ -168,12 +168,12 @@ class UserModel(BaseModel):
     @staticmethod
     def check_phone_exist(phone):
         try:
-            session.query(User).filter(User.phone == phone).one()
+            user = session.query(User).filter(User.phone == phone).one()
         except NoResultFound:
             return False
         except MultipleResultsFound:
             return True
-        return True
+        return user.phone
 
 
 class GuaranteeModel(BaseModel):
