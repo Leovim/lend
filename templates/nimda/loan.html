@@ -23,28 +23,19 @@
         </tr>
         </thead>
         <tbody>
+        {% for loan in unchecked_loans %}
         <tr>
-            <td>1</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a href="#">无</a></td>
-            <td>100</td>
-            <td>105</td>
-            <td>2014-03-30</td>
-            <td>2014-04-30</td>
-            <td><a class="btn btn-primary" href="/nimda/loan_check/1">通过</a></td>
+            <td>{{ loan['loan_id'] }}</td>
+            <td><a href="/nimda/user/{{ loan['user_id'] }}">{{ loan['user_id'] }}</a></td>
+            <td><a href="/nimda/user/{{ loan['guarantor1'] }}">{{ loan['guarantor1_name'] }}</a></td>
+            <td><a href="/nimda/user/{{ loan['guarantor2'] }}">{{ loan['guarantor2_name'] }}</a></td>
+            <td>{{ loan['loan_amount'] }}</td>
+            <td>{{ loan['remain_amount'] }}</td>
+            <td>{{ loan['loan_date'] }}</td>
+            <td>{{ loan['due_date'] }}</td>
+            <td><a class="btn btn-primary" href="/nimda/loan_check/{{ loan['loan_id'] }}">通过</a></td>
         </tr>
-        <tr>
-            <td>2</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a href="#">无</a></td>
-            <td>100</td>
-            <td>105</td>
-            <td>2014-03-30</td>
-            <td>2014-04-30</td>
-            <td><a class="btn btn-primary" href="/nimda/loan_check/2">通过</a></td>
-        </tr>
+        {% end %}
         </tbody>
     </table>
     <br />
@@ -65,30 +56,20 @@
         </tr>
         </thead>
         <tbody>
+        {% for loan in loans %}
         <tr>
-            <td>3</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a href="#">无</a></td>
-            <td>100</td>
-            <td>115</td>
-            <td>2014-03-30</td>
-            <td>2014-04-30</td>
-            <td>分期0次</td>
-            <td>逾期2次</td>
+            <td>{{ loan['loan_id'] }}</td>
+            <td><a href="/nimda/user/{{ loan['user_id'] }}">{{ loan['user_id'] }}</a></td>
+            <td><a href="/nimda/user/{{ loan['guarantor1'] }}">{{ loan['guarantor1_name'] }}</a></td>
+            <td><a href="/nimda/user/{{ loan['guarantor2'] }}">{{ loan['guarantor2_name'] }}</a></td>
+            <td>{{ loan['loan_amount'] }}</td>
+            <td>{{ loan['remain_amount'] }}</td>
+            <td>{{ loan['loan_date'] }}</td>
+            <td>{{ loan['due_date'] }}</td>
+            <td>分期{{ loan['split_status'] }}次</td>
+            <td>逾期{{ loan['due_status'] }}次</td>
         </tr>
-        <tr>
-            <td>4</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a href="#">无</a></td>
-            <td>100</td>
-            <td>105</td>
-            <td>2014-03-30</td>
-            <td>2014-04-30</td>
-            <td>分期0次</td>
-            <td>逾期0次</td>
-        </tr>
+        {% end %}
         </tbody>
     </table>
     <br />
@@ -108,28 +89,19 @@
         </tr>
         </thead>
         <tbody>
+        {% for loan in complete_loans %}
         <tr>
-            <td>3</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a href="#">无</a></td>
-            <td>100</td>
-            <td>2014-03-30</td>
-            <td>2014-04-30</td>
-            <td>分期0次</td>
-            <td>逾期2次</td>
+            <td>{{ loan['loan_id'] }}</td>
+            <td><a href="/nimda/user/{{ loan['user_id'] }}">{{ loan['user_id'] }}</a></td>
+            <td><a href="/nimda/user/{{ loan['guarantor1'] }}">{{ loan['guarantor1_name'] }}</a></td>
+            <td><a href="/nimda/user/{{ loan['guarantor2'] }}">{{ loan['guarantor2_name'] }}</a></td>
+            <td>{{ loan['loan_amount'] }}</td>
+            <td>{{ loan['loan_date'] }}</td>
+            <td>{{ loan['due_date'] }}</td>
+            <td>分期{{ loan['split_status'] }}次</td>
+            <td>逾期{{ loan['due_status'] }}次</td>
         </tr>
-        <tr>
-            <td>4</td>
-            <td><a href="/nimda/user/10">刘长通</a></td>
-            <td><a href="/nimda/user/11">路少德</a></td>
-            <td><a href="#">无</a></td>
-            <td>100</td>
-            <td>2014-03-30</td>
-            <td>2014-04-30</td>
-            <td>分期0次</td>
-            <td>逾期0次</td>
-        </tr>
+        {% end %}
         </tbody>
     </table>
 </div> <!-- /container -->

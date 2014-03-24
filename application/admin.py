@@ -29,7 +29,7 @@ class BaseHandler(tornado.web.RequestHandler):
 class IndexHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        pass
+        self.redirect("/loan")
 
 
 class AdminLoginHandler(BaseHandler):
@@ -57,6 +57,7 @@ class AdminAuthenticateHandler(BaseHandler):
 class AdminUserHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, user_id):
+        user_id = int(user_id)
         user_info = self.user_model.get_user_info(user_id)
         loans = self.loan_model.get_user_all_loans(user_id)
         for i, item in enumerate(loans):
@@ -81,7 +82,46 @@ class AdminUserHandler(BaseHandler):
 class AdminLoanHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        self.render("nimda/loan.html")
+        unchecked_loans = self.loan_model.get_all_unchecked_loans()
+        loans = self.loan_model.get_all_ing_loans()
+        complete_loans = self.loan_model.get_all_complete_loans()
+        for i, item in enumerate(unchecked_loans):
+            unchecked_loans[i]['guarantor1_name'] = None
+            unchecked_loans[i]['guarantor2_name'] = None
+            if item['guarantor1']:
+                guarantor1 = self.user_model.get_user_info(item['guarantor1'])
+                unchecked_loans[i]['guarantor1_name'] = guarantor1['real_name']
+            if item['guarantor2']:
+                guarantor2 = self.user_model.get_user_info(item['guarantor2'])
+                unchecked_loans[i]['guarantor2_name'] = guarantor2['real_name']
+        for i, item in enumerate(loans):
+            loans[i]['guarantor1_name'] = None
+            loans[i]['guarantor2_name'] = None
+            if item['guarantor1']:
+                guarantor1 = self.user_model.get_user_info(item['guarantor1'])
+                loans[i]['guarantor1_name'] = guarantor1['real_name']
+            if item['guarantor2']:
+                guarantor2 = self.user_model.get_user_info(item['guarantor2'])
+                loans[i]['guarantor2_name'] = guarantor2['real_name']
+        for i, item in enumerate(complete_loans):
+            complete_loans[i]['guarantor1_name'] = None
+            complete_loans[i]['guarantor2_name'] = None
+            if item['guarantor1']:
+                guarantor1 = self.user_model.get_user_info(item['guarantor1'])
+                complete_loans[i]['guarantor1_name'] = guarantor1['real_name']
+            if item['guarantor2']:
+                guarantor2 = self.user_model.get_user_info(item['guarantor2'])
+                complete_loans[i]['guarantor2_name'] = guarantor2['real_name']
+        self.render("nimda/loan.html", unchecked_loans=unchecked_loans,
+                    loans=loans, complete_loans=complete_loans)
+
+
+class AdminLoanCheckHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, loan_id):
+        loan_id = int(loan_id)
+        self.loan_model.change_check_status(loan_id, 1)
+        self.redirect("/loan")
 
 
 class AdminGuaranteeHandler(BaseHandler):
@@ -112,15 +152,9 @@ class AdminGuaranteeHandler(BaseHandler):
 class AdminGuaranteeCheckHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, guarantee_id):
+        guarantee_id = int(guarantee_id)
         self.guarantee_model.change_status(guarantee_id)
         self.redirect("nimda/guarantee")
-
-
-class AdminLoanCheckHandler(BaseHandler):
-    @tornado.web.authenticated
-    def get(self, loan_id):
-        loan_id = int(loan_id)
-        pass
 
 
 class AdminPayHandler(BaseHandler):
