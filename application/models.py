@@ -173,7 +173,7 @@ class UserModel(BaseModel):
             return False
         except MultipleResultsFound:
             return True
-        return user.phone
+        return user.user_id
 
 
 class GuaranteeModel(BaseModel):

@@ -890,20 +890,20 @@ class GuaranteeDeleteHandler(BaseHandler):
 
 class PasswordHandler(BaseHandler):
     def post(self):
-        user = self.get_current_user()
-        if not user:
+        phone = self.get_argument("phone", None)
+        password = self.get_argument("password", None)
+        user_id = self.user_model.check_phone_exist(phone)
+        if not user_id:
             result_json = json.dumps({'result': 0}, separators=(',', ':'),
                                      encoding="utf-8", indent=4,
                                      ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
-            return
-        password = self.get_argument("password", None)
 
         import hashlib
         sha = hashlib.sha1()
         sha.update(password)
         sha_password = sha.hexdigest()
-        self.user_model.update_user_password(user['user_id'], sha_password)
+        self.user_model.update_user_password(user_id, sha_password)
         result_json = json.dumps({'result': 1}, separators=(',', ':'),
                                  encoding="utf-8", indent=4,
                                  ensure_ascii=False)
