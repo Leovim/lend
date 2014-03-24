@@ -201,6 +201,15 @@ class GuaranteeModel(BaseModel):
         guarantee.status = 1
         # session.commit()
 
+    def check_guarantee_exist(self, guarantor_id, warrantee_id):
+        try:
+            g = session.query(Guarantee).\
+                filter(Guarantee.guarantor_id == guarantor_id).\
+                filter(Guarantee.warrantee_id == warrantee_id).one()
+        except NoResultFound:
+            return False
+        return g.guarantee_id
+
     @staticmethod
     def get_user_guarantor(user_id):
         # 担保人
@@ -272,6 +281,22 @@ class GuaranteeModel(BaseModel):
                 )
                 a.append(b)
         return a
+
+    def get_all_guarantee(self):
+        try:
+            guarantee = session.query(Guarantee).filter(Guarantee.status == 1)\
+                .all()
+        except NoResultFound:
+            return []
+        return self.change_list(guarantee)
+
+    def get_all_unchecked_guarantee(self):
+        try:
+            guarantee = session.query(Guarantee).filter(Guarantee.status == 0)\
+                .all()
+        except NoResultFound:
+            return []
+        return self.change_list(guarantee)
 
 
 class LoanModel(BaseModel):
