@@ -66,7 +66,11 @@
             <td>{{ loan['remain_amount'] }}</td>
             <td>{{ loan['loan_date'] }}</td>
             <td>{{ loan['due_date'] }}</td>
+            {% if loan['split_status'] != 0 %}
+            <td>分期{{ loan['split_status']['total_time'] }}次，间隔{{ loan['split_status']['interval_due'] }}周</td>
+            {% else %}
             <td>分期{{ loan['split_status'] }}次</td>
+            {% end %}
             <td>逾期{{ loan['due_status'] }}次</td>
         </tr>
         {% end %}
