@@ -381,9 +381,10 @@ class LoanModel(BaseModel):
 
     def get_user_all_loans(self, user_id):
         try:
-            loans = session.query(Loan).filter(Loan.user_id == user_id).all()
+            loans = session.query(Loan).filter(Loan.user_id == user_id).\
+                order_by(Loan.loan_id.desc()).all()
         except NoResultFound:
-            return False
+            return []
 
         return self.change_list(loans)
 
@@ -392,7 +393,7 @@ class LoanModel(BaseModel):
         # 可能不够3个，需要做处理
         try:
             loans = session.query(Loan).filter(Loan.user_id == user_id). \
-                filter(Loan.check_status != 2).order_by(Loan.user_id.desc()).\
+                filter(Loan.check_status != 2).order_by(Loan.loan_id.desc()).\
                 all()
         except NoResultFound:
             return []
@@ -406,7 +407,14 @@ class LoanModel(BaseModel):
         try:
             loans = session.query(Loan).filter(Loan.check_status == 0).all()
         except NoResultFound:
-            return False
+            return []
+        return self.change_list(loans)
+
+    def get_all_loans(self):
+        try:
+            loans = session.query(Loan).order_by(Loan.loan_id.desc()).all()
+        except NoResultFound:
+            return []
         return self.change_list(loans)
 
     @staticmethod
