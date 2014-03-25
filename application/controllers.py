@@ -5,8 +5,6 @@ import tornado.web
 from models import *
 from config import options
 
-# todo 推送
-
 
 class BaseHandler(tornado.web.RequestHandler):
     user_model = UserModel()
@@ -709,7 +707,6 @@ class PayRequestHandler(BaseHandler):
         type = int(self.get_argument("type", None))
         password = self.get_argument("password", None)
 
-
         # password check
         import hashlib
         sha = hashlib.sha1()
@@ -735,7 +732,17 @@ class PayRequestHandler(BaseHandler):
                                      ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
             return
+
         loan_info = self.loan_model.get_loan_info(loan_id)
+        # 不能在未完成审核的情况下再进行还款
+        # todo 告诉撸少
+        if self.behaviour_model.get_loan_pay_behaviour(loan_info['loan_id']):
+            result_json = json.dumps({'result': 4}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+
         # 新建还款行为（待审核）
 
         import datetime
@@ -771,7 +778,7 @@ class PayRequestHandler(BaseHandler):
             self.split_model.change_next_time(split_info['split_id'], next_date)
         # update remain amount
         self.loan_model.update_remain_amount(loan_info['loan_id'],
-                                             loan_info['remain_amount']-
+                                             loan_info['remain_amount'] -
                                              pay['amount'])
         # add bhv
         self.behaviour_model.add_behaviour(behaviour)
@@ -941,8 +948,8 @@ class UploadHandler(BaseHandler):
         import base64
         image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                   "static/images/")
-        pic_name = image_path + str(int(time.time() * 100)) + '.' + \
-                   self.get_argument("format", None)
+        pic_name = image_path + str(int(time.time() * 100)) + '.' \
+                   + self.get_argument("format", None)
         pic = self.get_argument("pic", None)
         pic = base64.decodestring(pic)
 
