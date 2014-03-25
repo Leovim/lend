@@ -816,7 +816,7 @@ class GuaranteeRequestHandler(BaseHandler):
         # todo 两人已建立担保关，告诉路少德
         if self.guarantee_model.check_guarantee_exist(guarantor_id, user['user_id']):
             # 两人已建立担保关系
-            result_json = json.dumps({'result': 6},
+            result_json = json.dumps({'result': 7},
                                      separators=(',', ':'),
                                      encoding="utf-8", indent=4,
                                      ensure_ascii=False)
