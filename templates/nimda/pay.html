@@ -47,7 +47,7 @@
             <td>{{ loan['amount'] }}</td>
             <td>{{ loan['type'] }}</td>
             <td>{{ loan['date'] }}</td>
-            <td><a href="/nimda/pay_check/{{ loan['pay_id'] }}">确认</a></td>
+            <td><a class="btn btn-primary" href="/nimda/pay_check/{{ loan['pay_id'] }}">确认</a></td>
         </tr>
         {% end %}
         </tbody>

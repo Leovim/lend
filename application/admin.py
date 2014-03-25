@@ -25,7 +25,7 @@ class BaseHandler(tornado.web.RequestHandler):
 class IndexHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        self.redirect("/nimda/loan")
+        self.render("nimda/index.html")
 
 
 class AdminLoginHandler(BaseHandler):
@@ -48,6 +48,13 @@ class AdminAuthenticateHandler(BaseHandler):
             self.redirect("/nimda/loan")
         else:
             self.render("index.html", result_json="用户名或密码错误")
+
+
+class AdminAllUserHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        users = self.user_model.get_all_users()
+        self.render("nimda/all_user.html", users=users)
 
 
 class AdminUserHandler(BaseHandler):
@@ -221,6 +228,7 @@ class AdminPayCheckHandler(BaseHandler):
         if loan_info['remain_amount'] == 0:
             # 已完成
             self.loan_model.change_check_status(loan_info['loan_id'], 2)
+        self.redirect("/nimda/pay")
 
 
 class AdminPushHandler(BaseHandler):

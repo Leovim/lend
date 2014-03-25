@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>用户</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap-theme.min.css">
+    <style>
+        .container {
+            margin-top: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>用户ID</th>
+            <th>头像</th>
+            <th>用户名</th>
+            <th>电话</th>
+            <th>真实姓名</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+        <tr>
+            <th>{{ user['user_id'] }}</th>
+            <th><img width="50" src="/static/images/{{ user['avatar'] }}" alt="avatar"/></th>
+            <th><a href="/nimda/user/{{ user['user_id'] }}">{{ user['username'] }}</a></th>
+            <th>{{ user['phone'] }}</th>
+            <th>{{ user['real_name'] }}</th>
+        </tr>
+        {% end %}
+        </tbody>
+    </table>
+</div> <!-- /container -->
+<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+</body>
+</html>
