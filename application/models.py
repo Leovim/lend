@@ -516,7 +516,7 @@ class BehaviourModel(BaseModel):
                 filter(Behaviour.user_id == user_id).\
                 order_by(Behaviour.behaviour_id.desc()).all()
         except NoResultFound:
-            return False
+            return []
 
         return self.change_list(behaviours)
 
@@ -526,7 +526,7 @@ class BehaviourModel(BaseModel):
                 filter(Behaviour.user_id == user_id).\
                 order_by(Behaviour.behaviour_id.desc()).all()
         except NoResultFound:
-            return False
+            return []
 
         if behaviours.__len__() < 10:
             return self.change_list(behaviours)
@@ -538,9 +538,29 @@ class BehaviourModel(BaseModel):
             behaviours = session.query(Behaviour).\
                 filter(Behaviour.check_status == 0).all()
         except NoResultFound:
-            return False
+            return []
 
         return self.change_list(behaviours)
+
+    def get_loan_behaviour(self, loan_id):
+        try:
+            behaviours = session.query(Behaviour). \
+                filter(Behaviour.loan_id == loan_id).all()
+        except NoResultFound:
+            return []
+
+        return self.change_list(behaviours)
+
+    def get_loan_pay_behaviour(self, loan_id):
+        try:
+            behaviour = session.query(Behaviour). \
+                filter(Behaviour.loan_id == loan_id). \
+                filter(Behaviour.bhv_type == 2).\
+                filter(Behaviour.check_status == 0).one()
+        except NoResultFound:
+            return False
+
+        return behaviour.as_dict()
 
 
 class SplitLoanModel(BaseModel):
@@ -596,12 +616,13 @@ class PayModel(BaseModel):
         # session.commit()
         return True
 
-    def get_pay_info(self, loan_id):
+    @staticmethod
+    def get_pay_info(pay_id):
         try:
-            pay = session.query(Pay).filter(Pay.loan_id == loan_id).all()
+            pay = session.query(Pay).filter(Pay.pay_id == pay_id).one()
         except NoResultFound:
-            return []
-        return self.change_list(pay)
+            return False
+        return pay.as_dict()
 
     def get_all_unchecked_pay(self):
         try:
