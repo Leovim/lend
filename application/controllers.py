@@ -768,10 +768,10 @@ class PayRequestHandler(BaseHandler):
             behaviour['money'] = split_info['amount_per']
             pay['amount'] = split_info['amount_per']
             # update split next_date
-            import datetime
             date_list = split_info['next_date'].split('-')
-            next_date = datetime.date(year=date_list[0], month=date_list[1],
-                                      day=date_list[2])
+            next_date = datetime.date(year=int(date_list[0]),
+                                      month=int(date_list[1]),
+                                      day=int(date_list[2]))
             week = datetime.timedelta(days=7)
             next_date = (next_date + week * split_info['interval_due']).\
                 __str__()
