@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>还款</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap-theme.min.css">
+</head>
+<body>
+<div class="container">
+    <h2>还款请求（待审核）</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>贷款ID</th>
+            <th>用户</th>
+            <th>担保人1</th>
+            <th>担保人2</th>
+            <th>贷款数额</th>
+            <th>待还数额</th>
+            <th>贷款日期</th>
+            <th>还款日期</th>
+            <th>分期情况</th>
+            <th>逾期情况</th>
+            <th>还款数额</th>
+            <th>还款账号</th>
+            <th>请求日期</th>
+            <th>审核</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for loan in unchecked_pay %}
+        <tr>
+            <td>{{ loan['loan_id'] }}</td>
+            <td><a href="/nimda/user/{{ loan['loan_info']['user_id'] }}">{{ loan['loan_info']['real_name'] }}</a></td>
+            <td><a href="/nimda/user/{{ loan['loan_info']['guarantor1'] }}">{{ loan['loan_info']['guarantor1_name'] }}</a></td>
+            <td><a href="/nimda/user/{{ loan['loan_info']['guarantor2'] }}">{{ loan['loan_info']['guarantor2_name'] }}</a></td>
+            <td>{{ loan['loan_info']['loan_amount'] }}</td>
+            <td>{{ loan['loan_info']['remain_amount'] }}</td>
+            <td>{{ loan['loan_info']['loan_date'] }}</td>
+            <td>{{ loan['loan_info']['due_date'] }}</td>
+            {% if loan['loan_info']['split_status'] != 0 %}
+            <td>分期{{ loan['loan_info']['split_status']['total_time'] }}次，间隔{{ loan['loan_info']['split_status']['interval_due'] }}周</td>
+            {% else %}
+            <td>分期{{ loan['loan_info']['split_status'] }}次</td>
+            {% end %}
+            <td>逾期{{ loan['loan_info']['due_status'] }}次</td>
+            <td>{{ loan['amount'] }}</td>
+            <td>{{ loan['type'] }}</td>
+            <td>{{ loan['date'] }}</td>
+            <td><a href="/nimda/pay_check/{{ loan['pay_id'] }}">确认</a></td>
+        </tr>
+        {% end %}
+        </tbody>
+    </table>
+</div> <!-- /container -->
+<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+</body>
+</html>

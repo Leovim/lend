@@ -650,6 +650,8 @@ class SplitRequestHandler(BaseHandler):
 
         # 计算每次还款额
         amount_per = self.interest_round(remain_amount/total_time)
+        # 重置还款额
+        loan['remain_amount'] = amount_per * total_time
 
         # 计算下次还款日期
         now_date = datetime.date(year=int(due_date_list[0]),
