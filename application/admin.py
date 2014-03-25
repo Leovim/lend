@@ -4,7 +4,6 @@ import tornado.web
 from models import *
 from config import options
 
-# todo 还款状态，完成后需修改loan，behaviour，pay中相关字段的还款状态
 # todo 添加修改状态功能后，增加loan model中相关检查
 
 
@@ -213,6 +212,15 @@ class AdminPayCheckHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, pay_id):
         pay_id = int(pay_id)
+        pay_info = self.pay_model.get_pay_info(pay_id)
+        bhv_info = self.behaviour_model.\
+            get_loan_pay_behaviour(pay_info['loan_id'])
+        self.behaviour_model.change_status(bhv_info['behaviour_id'], 1)
+        self.pay_model.update_check_status(pay_id)
+        loan_info = self.loan_model.get_loan_info(pay_info['loan_id'])
+        if loan_info['remain_amount'] == 0:
+            # 已完成
+            self.loan_model.change_check_status(loan_info['loan_id'], 2)
 
 
 class AdminPushHandler(BaseHandler):
