@@ -133,6 +133,13 @@ class UserModel(BaseModel):
         user.credit = int(credit)
         # session.commit()
 
+    def get_all_users(self):
+        try:
+            users = session.query(User).all()
+        except NoResultFound:
+            return []
+        return self.change_list(users)
+
     @staticmethod
     def get_user_info(user_id):
         try:
