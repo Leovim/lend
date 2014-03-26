@@ -1,8 +1,14 @@
 #coding=utf8
 
 import tornado.web
+import tornado.httpclient
+import tornado.gen
 from models import *
 from config import options
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 # todo 添加修改状态功能后，增加loan model中相关检查
 
@@ -17,9 +23,30 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def get_current_user(self):
         user_id = self.get_secure_cookie("user", max_age_days=365)
-        if user_id == '0':
-            return True
+        if user_id == '1':
+            return 1
+        elif user_id == '2':
+            return 2
         return False
+
+    @tornado.gen.coroutine
+    def send_sms(self, phone, content):
+        http = tornado.httpclient.AsyncHTTPClient()
+        url = "http://utf8.sms.webchinese.cn/?Uid=shuguozhu&Key=" \
+              + options.sms_secret + "&smsMob=" + phone + "&"
+        import urllib
+        data = dict()
+        data['smsText'] = content
+        n_content = urllib.urlencode(data)
+        url = url + n_content
+        response = yield http.fetch(url)
+        self.finish()
+        if response.body == '1':
+            yield 1
+            return
+        else:
+            yield 0
+            return
 
 
 class IndexHandler(BaseHandler):
@@ -43,8 +70,11 @@ class AdminAuthenticateHandler(BaseHandler):
     def post(self):
         username = self.get_argument("username", None)
         password = self.get_argument("password", None)
-        if username == options.admin and password == options.password:
-            self.set_secure_cookie("user", str(0), expires_days=365)
+        if username == options.admin and password == options.admin_password:
+            self.set_secure_cookie("user", str(1), expires_days=365)
+            self.redirect("/nimda/loan")
+        elif username == options.read and password == options.read_password:
+            self.set_secure_cookie("user", str(2), expires_days=365)
             self.redirect("/nimda/loan")
         else:
             self.render("index.html", result_json="用户名或密码错误")
@@ -234,41 +264,8 @@ class AdminPayCheckHandler(BaseHandler):
 class AdminPushHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, user_id):
-        import urllib
-        import urllib2
-        import json
-        import hashlib
-
-        push = dict(
-            sendno=10086,
-            app_key=options.app_key,
-            receiver_type=3,
-            receiver_value="",
-            verification_code="",
-            msg_type=1,
-            msg_content="",
-            platform="android",
-            time_to_live=259200,
-        )
         user_info = self.user_model.get_user_info(user_id)
-        push['receiver_value'] = user_info['phone']
-
-        master_secret = options.master_secret
-        verify = str(push['sendno']) + str(push['receiver_type']) + \
-                 push['receiver_value'] + master_secret
-        md = hashlib.md5()
-        md.update(verify)
-        push['verification_code'] = md.hexdigest()
-
-        msg_content = dict(
-            n_content="你的贷款即将到期了，请尽快归还。"
-        )
-        msg_content = json.JSONEncoder().encode(msg_content)
-        push['msg_content'] = msg_content
-
-        url = "http://api.jpush.cn:8800/v2/push"
-        data = urllib.urlencode(push)
-        req = urllib2.Request(url, data)
-        response = urllib2.urlopen(req)
-        the_page = response.read()
-        print the_page
+        phone = user_info['phone']
+        content = "你的贷款即将到期了，请尽快归还。"
+        self.send_sms(phone, content)
+        self.redirect('/nimda/loan')
