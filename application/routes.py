@@ -69,5 +69,5 @@ handlers = [
     (r"/nimda/push/([0-9]*)", AdminPushHandler),
     (r"/nimda/all_user", AdminAllUserHandler),
     (r"/nimda/index", IndexHandler),
-    (r"/nimda/", IndexHandler),
+    (r"/nimda", IndexHandler),
 ]
