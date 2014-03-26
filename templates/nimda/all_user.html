@@ -20,7 +20,6 @@
         <thead>
         <tr>
             <th>用户ID</th>
-            <th>头像</th>
             <th>用户名</th>
             <th>电话</th>
             <th>真实姓名</th>
@@ -29,11 +28,10 @@
         <tbody>
         {% for user in users %}
         <tr>
-            <th>{{ user['user_id'] }}</th>
-            <th><img width="50" src="/static/images/{{ user['avatar'] }}" alt="avatar"/></th>
-            <th><a href="/nimda/user/{{ user['user_id'] }}">{{ user['username'] }}</a></th>
-            <th>{{ user['phone'] }}</th>
-            <th>{{ user['real_name'] }}</th>
+            <td>{{ user['user_id'] }}</td>
+            <td><a href="/nimda/user/{{ user['user_id'] }}">{{ user['username'] }}</a></td>
+            <td>{{ user['phone'] }}</td>
+            <td>{{ user['real_name'] }}</td>
         </tr>
         {% end %}
         </tbody>
