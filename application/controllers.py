@@ -2,8 +2,14 @@
 
 import json
 import tornado.web
+import tornado.httpclient
+import tornado.gen
 from models import *
 from config import options
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -111,15 +117,24 @@ class BaseHandler(tornado.web.RequestHandler):
         elif term_ == 4:
             return self.calc_four_interest(principal_)
 
-    @staticmethod
-    def send_sms(phone, verification_code):
+    @tornado.gen.coroutine
+    def send_sms(self, phone, content):
+        http = tornado.httpclient.AsyncHTTPClient()
         url = "http://utf8.sms.webchinese.cn/?Uid=shuguozhu&Key=" \
-              + options.sms_secret + "&smsMob=" + phone + "&smsText=" \
-              "%E6%82%A8%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E6%98%AF" + \
-              verification_code
-        import urllib2
-        a = urllib2.urlopen(url)
-        return a.read()
+              + options.sms_secret + "&smsMob=" + phone + "&"
+        import urllib
+        data = dict()
+        data['smsText'] = content
+        n_content = urllib.urlencode(data)
+        url = url + n_content
+        response = yield http.fetch(url)
+        self.finish()
+        if response.body == '1':
+            yield 1
+            return
+        else:
+            yield 0
+            return
 
 
 class UserHandler(BaseHandler):
@@ -933,9 +948,11 @@ class SendSmsHandler(BaseHandler):
     def post(self):
         phone = self.get_argument("phone", None)
         verify = self.get_argument("verify", None)
-        result = self.send_sms(phone, verify)
+        content = "您的验证码是"
+        content = content + verify
+        result = self.send_sms(phone, content)
 
-        result_json = json.dumps({'result': result}, separators=(',', ':'),
+        result_json = json.dumps({'result': 1}, separators=(',', ':'),
                                  encoding="utf-8", indent=4,
                                  ensure_ascii=False)
         self.render("index.html", title="Lend", result_json=result_json)
