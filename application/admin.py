@@ -164,6 +164,8 @@ class AdminLoanCheckHandler(BaseHandler):
         user = self.get_current_user()
         if user == 1:
             loan_id = int(loan_id)
+            behaviour = self.behaviour_model.get_loan_loan_behaviour(loan_id)
+            self.behaviour_model.change_status(behaviour['behaviour_id'], 1)
             self.loan_model.change_check_status(loan_id, 1)
             self.redirect("/nimda/loan")
         elif user == 2:

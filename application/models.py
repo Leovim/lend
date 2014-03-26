@@ -558,6 +558,17 @@ class BehaviourModel(BaseModel):
 
         return self.change_list(behaviours)
 
+    def get_loan_loan_behaviour(self, loan_id):
+        try:
+            behaviour = session.query(Behaviour). \
+                filter(Behaviour.loan_id == loan_id). \
+                filter(Behaviour.bhv_type == 1). \
+                filter(Behaviour.check_status == 0).one()
+        except NoResultFound:
+            return False
+
+        return behaviour.as_dict()
+
     def get_loan_pay_behaviour(self, loan_id):
         try:
             behaviour = session.query(Behaviour). \
