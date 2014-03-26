@@ -161,9 +161,15 @@ class AdminLoanHandler(BaseHandler):
 class AdminLoanCheckHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, loan_id):
-        loan_id = int(loan_id)
-        self.loan_model.change_check_status(loan_id, 1)
-        self.redirect("/nimda/loan")
+        user = self.get_current_user()
+        if user == 1:
+            loan_id = int(loan_id)
+            self.loan_model.change_check_status(loan_id, 1)
+            self.redirect("/nimda/loan")
+        elif user == 2:
+            self.render("index.html", result_json="没有权限进行修改")
+        else:
+            self.redirect("/nimda/login")
 
 
 class AdminGuaranteeHandler(BaseHandler):
@@ -194,9 +200,15 @@ class AdminGuaranteeHandler(BaseHandler):
 class AdminGuaranteeCheckHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, guarantee_id):
-        guarantee_id = int(guarantee_id)
-        self.guarantee_model.change_status(guarantee_id)
-        self.redirect("/nimda/guarantee")
+        user = self.get_current_user()
+        if user == 1:
+            guarantee_id = int(guarantee_id)
+            self.guarantee_model.change_status(guarantee_id)
+            self.redirect("/nimda/guarantee")
+        elif user == 2:
+            self.render("index.html", result_json="没有权限进行修改")
+        else:
+            self.redirect("/nimda/login")
 
 
 class AdminPayHandler(BaseHandler):
@@ -248,17 +260,23 @@ class AdminPayHandler(BaseHandler):
 class AdminPayCheckHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, pay_id):
-        pay_id = int(pay_id)
-        pay_info = self.pay_model.get_pay_info(pay_id)
-        bhv_info = self.behaviour_model.\
-            get_loan_pay_behaviour(pay_info['loan_id'])
-        self.behaviour_model.change_status(bhv_info['behaviour_id'], 1)
-        self.pay_model.update_check_status(pay_id)
-        loan_info = self.loan_model.get_loan_info(pay_info['loan_id'])
-        if loan_info['remain_amount'] == 0:
-            # 已完成
-            self.loan_model.change_check_status(loan_info['loan_id'], 2)
-        self.redirect("/nimda/pay")
+        user = self.get_current_user()
+        if user == 1:
+            pay_id = int(pay_id)
+            pay_info = self.pay_model.get_pay_info(pay_id)
+            bhv_info = self.behaviour_model.\
+                get_loan_pay_behaviour(pay_info['loan_id'])
+            self.behaviour_model.change_status(bhv_info['behaviour_id'], 1)
+            self.pay_model.update_check_status(pay_id)
+            loan_info = self.loan_model.get_loan_info(pay_info['loan_id'])
+            if loan_info['remain_amount'] == 0:
+                # 已完成
+                self.loan_model.change_check_status(loan_info['loan_id'], 2)
+            self.redirect("/nimda/pay")
+        elif user == 2:
+            self.render("index.html", result_json="没有权限进行修改")
+        else:
+            self.redirect("/nimda/login")
 
 
 class AdminPushHandler(BaseHandler):
