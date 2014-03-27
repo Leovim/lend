@@ -194,10 +194,14 @@ class GuaranteeModel(BaseModel):
 
     @staticmethod
     def delete_guarantee(guarantor_id, warrantee_id):
-        guarantee = session.query(Guarantee).\
-            filter(Guarantee.guarantor_id == guarantor_id).\
-            filter(Guarantee.warrantee_id == warrantee_id).one()
+        try:
+            guarantee = session.query(Guarantee).\
+                filter(Guarantee.guarantor_id == guarantor_id).\
+                filter(Guarantee.warrantee_id == warrantee_id).one()
+        except NoResultFound:
+            return False
         session.delete(guarantee)
+        return True
         # session.commit()
 
     @staticmethod

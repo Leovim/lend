@@ -905,10 +905,32 @@ class GuaranteeDeleteHandler(BaseHandler):
         # type == 2: the user is warrantee
         if type == 1:
             warrantee_id = int(self.get_argument("id", None))
-            self.guarantee_model.delete_guarantee(user['user_id'], warrantee_id)
+            if self.guarantee_model.delete_guarantee(user['user_id'], warrantee_id):
+                result_json = json.dumps({'result': 1}, separators=(',', ':'),
+                                         encoding="utf-8", indent=4,
+                                         ensure_ascii=false)
+                self.render("index.html", title="lend", result_json=result_json)
+                return
+            else:
+                result_json = json.dumps({'result': 3}, separators=(',', ':'),
+                                         encoding="utf-8", indent=4,
+                                         ensure_ascii=False)
+                self.render("index.html", title="Lend", result_json=result_json)
+                return
         elif type == 2:
             guarantor_id = int(self.get_argument("id", None))
-            self.guarantee_model.delete_guarantee(guarantor_id, user['user_id'])
+            if self.guarantee_model.delete_guarantee(guarantor_id, user['user_id']):
+                result_json = json.dumps({'result': 1}, separators=(',', ':'),
+                                         encoding="utf-8", indent=4,
+                                         ensure_ascii=False)
+                self.render("index.html", title="Lend", result_json=result_json)
+                return
+            else:
+                result_json = json.dumps({'result': 3}, separators=(',', ':'),
+                                         encoding="utf-8", indent=4,
+                                         ensure_ascii=False)
+                self.render("index.html", title="Lend", result_json=result_json)
+                return
         else:
             # type error
             result_json = json.dumps({'result': 2}, separators=(',', ':'),
@@ -916,10 +938,6 @@ class GuaranteeDeleteHandler(BaseHandler):
                                      ensure_ascii=False)
             self.render("index.html", title="Lend", result_json=result_json)
             return
-        result_json = json.dumps({'result': 1}, separators=(',', ':'),
-                                 encoding="utf-8", indent=4,
-                                 ensure_ascii=False)
-        self.render("index.html", title="Lend", result_json=result_json)
 
 
 class PasswordHandler(BaseHandler):
