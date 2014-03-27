@@ -90,6 +90,9 @@ class AdminAllUserHandler(BaseHandler):
 class AdminUserHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, user_id):
+        if user_id == "":
+            self.render("index.html", result_json="用户不存在")
+            return
         user_id = int(user_id)
         user_info = self.user_model.get_user_info(user_id)
         loans = self.loan_model.get_user_all_loans(user_id)
