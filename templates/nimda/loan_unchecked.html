@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>贷款</title>
+    <title>贷款请求（待审核）</title>
     <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap-theme.min.css">
     <style>
@@ -14,7 +14,7 @@
 <body>
 <a href="/nimda/index">返回首页</a>
 <div class="container">
-    <h4>贷款（正在进行）</h4>
+    <h4>贷款请求（待审核）</h4>
     <table class="table table-striped">
         <thead>
         <tr>
@@ -26,13 +26,11 @@
             <th>待还数额</th>
             <th>贷款日期</th>
             <th>还款日期</th>
-            <th>分期情况</th>
-            <th>逾期情况</th>
-            <th>提醒还款</th>
+            <th>审核</th>
         </tr>
         </thead>
         <tbody>
-        {% for loan in loans %}
+        {% for loan in unchecked_loans %}
         <tr>
             <td>{{ loan['loan_id'] }}</td>
             <td><a href="/nimda/user/{{ loan['user_id'] }}">{{ loan['real_name'] }}</a></td>
@@ -42,18 +40,11 @@
             <td>{{ loan['remain_amount'] }}</td>
             <td>{{ loan['loan_date'] }}</td>
             <td>{{ loan['due_date'] }}</td>
-            {% if loan['split_status'] != 0 %}
-            <td>分期{{ loan['split_status']['total_time'] }}次，间隔{{ loan['split_status']['interval_due'] }}周</td>
-            {% else %}
-            <td>分期{{ loan['split_status'] }}次</td>
-            {% end %}
-            <td>逾期{{ loan['due_status'] }}次</td>
-            <td><a href="/nimda/push/{{ loan['user_id'] }}">提醒</a></td>
+            <td><a class="btn btn-primary" href="/nimda/loan_check/{{ loan['loan_id'] }}">通过</a></td>
         </tr>
         {% end %}
         </tbody>
     </table>
-    <br />
 </div> <!-- /container -->
 <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
 <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>

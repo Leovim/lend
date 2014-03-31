@@ -72,10 +72,10 @@ class AdminAuthenticateHandler(BaseHandler):
         password = self.get_argument("password", None)
         if username == options.admin and password == options.admin_password:
             self.set_secure_cookie("user", str(1), expires_days=365)
-            self.redirect("/nimda/loan")
+            self.redirect("/nimda/index")
         elif username == options.read and password == options.read_password:
             self.set_secure_cookie("user", str(2), expires_days=365)
-            self.redirect("/nimda/loan")
+            self.redirect("/nimda/index")
         else:
             self.render("index.html", result_json="用户名或密码错误")
 
@@ -118,20 +118,7 @@ class AdminUserHandler(BaseHandler):
 class AdminLoanHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        unchecked_loans = self.loan_model.get_all_unchecked_loans()
         loans = self.loan_model.get_all_ing_loans()
-        complete_loans = self.loan_model.get_all_complete_loans()
-        for i, item in enumerate(unchecked_loans):
-            user_info = self.user_model.get_user_info(item['user_id'])
-            unchecked_loans[i]['real_name'] = user_info['real_name']
-            unchecked_loans[i]['guarantor1_name'] = None
-            unchecked_loans[i]['guarantor2_name'] = None
-            if item['guarantor1']:
-                guarantor1 = self.user_model.get_user_info(item['guarantor1'])
-                unchecked_loans[i]['guarantor1_name'] = guarantor1['real_name']
-            if item['guarantor2']:
-                guarantor2 = self.user_model.get_user_info(item['guarantor2'])
-                unchecked_loans[i]['guarantor2_name'] = guarantor2['real_name']
         for i, item in enumerate(loans):
             user_info = self.user_model.get_user_info(item['user_id'])
             loans[i]['real_name'] = user_info['real_name']
@@ -146,6 +133,32 @@ class AdminLoanHandler(BaseHandler):
             if item['split_status'] == 1:
                 split_info = self.split_model.get_split_info(item['loan_id'])
                 loans[i]['split_status'] = split_info
+        self.render("nimda/loan.html", loans=loans)
+
+
+class AdminLoanUncheckedHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        unchecked_loans = self.loan_model.get_all_unchecked_loans()
+        for i, item in enumerate(unchecked_loans):
+            user_info = self.user_model.get_user_info(item['user_id'])
+            unchecked_loans[i]['real_name'] = user_info['real_name']
+            unchecked_loans[i]['guarantor1_name'] = None
+            unchecked_loans[i]['guarantor2_name'] = None
+            if item['guarantor1']:
+                guarantor1 = self.user_model.get_user_info(item['guarantor1'])
+                unchecked_loans[i]['guarantor1_name'] = guarantor1['real_name']
+            if item['guarantor2']:
+                guarantor2 = self.user_model.get_user_info(item['guarantor2'])
+                unchecked_loans[i]['guarantor2_name'] = guarantor2['real_name']
+        self.render("nimda/loan_unchecked.html",
+                    unchecked_loans=unchecked_loans)
+
+
+class AdminLoanCompleteHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        complete_loans = self.loan_model.get_all_complete_loans()
         for i, item in enumerate(complete_loans):
             user_info = self.user_model.get_user_info(item['user_id'])
             complete_loans[i]['real_name'] = user_info['real_name']
@@ -157,9 +170,7 @@ class AdminLoanHandler(BaseHandler):
             if item['guarantor2']:
                 guarantor2 = self.user_model.get_user_info(item['guarantor2'])
                 complete_loans[i]['guarantor2_name'] = guarantor2['real_name']
-        self.render("nimda/loan.html", unchecked_loans=unchecked_loans,
-                    loans=loans, complete_loans=complete_loans)
-
+        self.render("nimda/loan_complete.html", complete_loans=complete_loans)
 
 class AdminLoanCheckHandler(BaseHandler):
     @tornado.web.authenticated
@@ -170,7 +181,7 @@ class AdminLoanCheckHandler(BaseHandler):
             behaviour = self.behaviour_model.get_loan_loan_behaviour(loan_id)
             self.behaviour_model.change_status(behaviour['behaviour_id'], 1)
             self.loan_model.change_check_status(loan_id, 1)
-            self.redirect("/nimda/loan")
+            self.redirect("/nimda/loan_unchecked")
         elif user == 2:
             self.render("index.html", result_json="没有权限进行修改")
         else:
@@ -216,7 +227,7 @@ class AdminGuaranteeCheckHandler(BaseHandler):
         if user == 1:
             guarantee_id = int(guarantee_id)
             self.guarantee_model.change_status(guarantee_id)
-            self.redirect("/nimda/guarantee")
+            self.redirect("/nimda/guarantee_unchecked")
         elif user == 2:
             self.render("index.html", result_json="没有权限进行修改")
         else:

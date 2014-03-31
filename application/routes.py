@@ -32,6 +32,8 @@ from admin import \
     AdminGuaranteeUncheckedHandler, \
     AdminGuaranteeCheckHandler, \
     AdminLoanHandler, \
+    AdminLoanUncheckedHandler, \
+    AdminLoanCompleteHandler, \
     AdminLoanCheckHandler, \
     AdminPayHandler, \
     AdminPayCheckHandler, \
@@ -67,6 +69,8 @@ handlers = [
     (r"/nimda/guarantee_unchecked", AdminGuaranteeUncheckedHandler),
     (r"/nimda/guarantee_check/([0-9]*)", AdminGuaranteeCheckHandler),
     (r"/nimda/loan", AdminLoanHandler),
+    (r"/nimda/loan_unchecked", AdminLoanUncheckedHandler),
+    (r"/nimda/loan_complete", AdminLoanCompleteHandler),
     (r"/nimda/loan_check/([0-9]*)", AdminLoanCheckHandler),
     (r"/nimda/pay", AdminPayHandler),
     (r"/nimda/pay_check/([0-9]*)", AdminPayCheckHandler),
