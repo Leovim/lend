@@ -37,6 +37,18 @@
         {% end %}
         </tbody>
     </table>
+    <ul class="pager">
+        {% if previous_page == 0 %}
+        <li class="previous disabled"><a>Previous</a></li>
+        {% else %}
+        <li class="previous"><a href="/nimda/all_user/{{ previous_page }}">Previous</a></li>
+        {% end %}
+        {% if next_page == 0 %}
+        <li class="next disabled"><a>Next</a></li>
+        {% else %}
+        <li class="next"><a href="/nimda/all_user/{{ next_page }}">Next</a></li>
+        {% end %}
+    </ul>
 </div> <!-- /container -->
 <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
 <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>

@@ -75,7 +75,7 @@ handlers = [
     (r"/nimda/pay", AdminPayHandler),
     (r"/nimda/pay_check/([0-9]*)", AdminPayCheckHandler),
     (r"/nimda/push/([0-9]*)", AdminPushHandler),
-    (r"/nimda/all_user", AdminAllUserHandler),
+    (r"/nimda/all_user/([0-9]*)", AdminAllUserHandler),
     (r"/nimda/index", IndexHandler),
     (r"/nimda", IndexHandler),
 ]

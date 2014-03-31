@@ -10,10 +10,9 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-# todo 添加修改状态功能后，增加loan model中相关检查
-
 
 class BaseHandler(tornado.web.RequestHandler):
+    item_per_page = 3
     user_model = UserModel()
     guarantee_model = GuaranteeModel()
     loan_model = LoanModel()
@@ -82,9 +81,29 @@ class AdminAuthenticateHandler(BaseHandler):
 
 class AdminAllUserHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self):
-        users = self.user_model.get_all_users()
-        self.render("nimda/all_user.html", users=users)
+    def get(self, page):
+        try:
+            page = int(page)
+        except ValueError:
+            self.send_error(404)
+
+        start = self.item_per_page * (page - 1)
+        end = self.item_per_page * page
+        users = self.user_model.get_slice_users(start, end)
+        if users == []:
+            self.send_error(404)
+
+        next_users = self.user_model.get_slice_users(end, end + 1)
+        if next_users == []:
+            next_page = 0
+        else:
+            next_page = page + 1
+        if page == 1:
+            previous_page = 0
+        else:
+            previous_page = page - 1
+        self.render("nimda/all_user.html", users=users,
+                    previous_page=previous_page, next_page=next_page)
 
 
 class AdminUserHandler(BaseHandler):
