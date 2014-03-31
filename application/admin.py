@@ -12,7 +12,7 @@ sys.setdefaultencoding('utf-8')
 
 
 class BaseHandler(tornado.web.RequestHandler):
-    item_per_page = 3
+    item_per_page = 2
     user_model = UserModel()
     guarantee_model = GuaranteeModel()
     loan_model = LoanModel()
@@ -93,6 +93,12 @@ class AdminAllUserHandler(BaseHandler):
         if users == []:
             self.send_error(404)
 
+        user_number = self.user_model.get_users_number()
+        if user_number % self.item_per_page > 0:
+            page_number = user_number / self.item_per_page + 1
+        else:
+            page_number = user_number / self.item_per_page
+
         next_users = self.user_model.get_slice_users(end, end + 1)
         if next_users == []:
             next_page = 0
@@ -102,8 +108,9 @@ class AdminAllUserHandler(BaseHandler):
             previous_page = 0
         else:
             previous_page = page - 1
-        self.render("nimda/all_user.html", users=users,
-                    previous_page=previous_page, next_page=next_page)
+        self.render("nimda/all_user.html", users=users, page=page,
+                    previous_page=previous_page, next_page=next_page,
+                    page_number=page_number)
 
 
 class AdminUserHandler(BaseHandler):
