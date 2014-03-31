@@ -336,9 +336,14 @@ class GuaranteeModel(BaseModel):
             return []
         return self.change_list(guarantee)
 
+    def get_slice_guarantee(self, start, end):
+        loans = session.query(Guarantee).filter(Guarantee.status == 1). \
+            order_by(Guarantee.guarantee_id.desc()).slice(start, end).all()
+        return self.change_list(loans)
+
     @staticmethod
     def get_guarantees_number():
-        return session.query(Guarantee).count()
+        return session.query(Guarantee).filter(Guarantee.status == 1).count()
 
     def get_all_unchecked_guarantee(self):
         try:

@@ -68,7 +68,7 @@ handlers = [
     (r"/nimda/logout", AdminLogoutHandler),
     (r"/nimda/authenticate", AdminAuthenticateHandler),
     (r"/nimda/user/([0-9]*)", AdminUserHandler),
-    (r"/nimda/guarantee", AdminGuaranteeHandler),
+    (r"/nimda/guarantee/([0-9]*)", AdminGuaranteeHandler),
     (r"/nimda/guarantee_unchecked", AdminGuaranteeUncheckedHandler),
     (r"/nimda/guarantee_check/([0-9]*)", AdminGuaranteeCheckHandler),
     (r"/nimda/loan/([0-9]*)", AdminLoanHandler),

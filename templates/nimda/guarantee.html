@@ -15,6 +15,16 @@
 <a href="/nimda/index">返回首页</a>
 <div class="container">
     <h4>担保关系</h4>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            第{{ page }}页<span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            {% for x in range(1, page_number + 1) %}
+            <li><a href="/nimda/guarantee/{{ x }}">第{{ x }}页</a></li>
+            {% end %}
+        </ul>
+    </div>
     <table class="table table-striped">
         <thead>
         <tr>
@@ -33,6 +43,18 @@
         {% end %}
         </tbody>
     </table>
+    <ul class="pager">
+        {% if previous_page == 0 %}
+        <li class="disabled"><a>&larr; Previous</a></li>
+        {% else %}
+        <li class=""><a href="/nimda/guarantee/{{ previous_page }}">&larr; Previous</a></li>
+        {% end %}
+        {% if next_page == 0 %}
+        <li class="disabled"><a>&rarr; Next</a></li>
+        {% else %}
+        <li class=""><a href="/nimda/guarantee/{{ next_page }}">&rarr; Next</a></li>
+        {% end %}
+    </ul>
 </div> <!-- /container -->
 <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
 <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>

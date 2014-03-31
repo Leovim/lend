@@ -12,7 +12,7 @@ sys.setdefaultencoding('utf-8')
 
 
 class BaseHandler(tornado.web.RequestHandler):
-    item_per_page = 2
+    item_per_page = 1
     user_model = UserModel()
     guarantee_model = GuaranteeModel()
     loan_model = LoanModel()
@@ -270,8 +270,33 @@ class AdminLoanCheckHandler(BaseHandler):
 
 class AdminGuaranteeHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self):
-        guarantee = self.guarantee_model.get_all_guarantee()
+    def get(self, page):
+        try:
+            page = int(page)
+        except ValueError:
+            self.send_error(404)
+
+        start = self.item_per_page * (page - 1)
+        end = self.item_per_page * page
+        guarantee = self.guarantee_model.get_slice_guarantee(start, end)
+        if guarantee == []:
+            self.send_error(404)
+
+        guarantee_number = self.guarantee_model.get_guarantees_number()
+        if guarantee_number % self.item_per_page > 0:
+            page_number = guarantee_number / self.item_per_page + 1
+        else:
+            page_number = guarantee_number / self.item_per_page
+
+        next_guarantee = self.guarantee_model.get_slice_guarantee(end, end + 1)
+        if next_guarantee == []:
+            next_page = 0
+        else:
+            next_page = page + 1
+        if page == 1:
+            previous_page = 0
+        else:
+            previous_page = page - 1
         for i, item in enumerate(guarantee):
             guarantor_info = self.user_model.\
                 get_user_info(guarantee[i]['guarantor_id'])
@@ -279,7 +304,9 @@ class AdminGuaranteeHandler(BaseHandler):
             warrantee_info = self.user_model.\
                 get_user_info(guarantee[i]['warrantee_id'])
             guarantee[i]['warrantee_name'] = warrantee_info['real_name']
-        self.render("nimda/guarantee.html", guarantee=guarantee)
+        self.render("nimda/guarantee.html", guarantee=guarantee, page=page,
+                    previous_page=previous_page, next_page=next_page,
+                    page_number=page_number)
 
 
 class AdminGuaranteeUncheckedHandler(BaseHandler):
@@ -297,7 +324,6 @@ class AdminGuaranteeUncheckedHandler(BaseHandler):
                 warrantee_info['real_name']
         self.render("nimda/guarantee_unchecked.html",
                     unchecked_guarantee=unchecked_guarantee)
-
 
 
 class AdminGuaranteeCheckHandler(BaseHandler):
