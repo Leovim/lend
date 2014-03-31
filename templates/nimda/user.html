@@ -20,7 +20,9 @@
 <body>
 <a href="/nimda/index">返回首页</a>
 <div class="container">
+    {% if user_info['avatar'] is not None %}
     <img width="100" src="/static/images/{{ user_info['avatar'] }}" alt="avatar"/>
+    {% end %}
     <table class="table table-striped">
         <tbody>
         <tr>
@@ -94,10 +96,18 @@
         </tr>
         </tbody>
     </table>
+    {% if user_info['pic1'] is not None %}
     <a href="/static/images/{{ user_info['pic1'] }}"><img width="500" src="/static/images/{{ user_info['pic1'] }}" alt="pic1"/></a>
+    {% end %}
+    {% if user_info['pic1'] is not None %}
     <a href="/static/images/{{ user_info['pic2'] }}"><img width="500" src="/static/images/{{ user_info['pic2'] }}" alt="pic2"/></a>
+    {% end %}
+    {% if user_info['pic1'] is not None %}
     <a href="/static/images/{{ user_info['pic3'] }}"><img width="500" src="/static/images/{{ user_info['pic3'] }}" alt="pic3"/></a>
+    {% end %}
+    {% if user_info['pic1'] is not None %}
     <a href="/static/images/{{ user_info['pic4'] }}"><img width="500" src="/static/images/{{ user_info['pic4'] }}" alt="pic4"/></a>
+    {% end %}
     <br />
     <h4>贷款</h4>
     <table class="table table-striped">
