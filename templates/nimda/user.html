@@ -76,7 +76,14 @@
         </tr>
         <tr>
             <td>宿舍</td>
-            <td>{{ user_info['dorm'] }}</td>
+            <td>
+                {{ user_info['dorm'] }}
+                <form action="/nimda/reset_dorm" method="post">
+                    <input type="text" name="dorm" placeholder="新宿舍位置"/>
+                    <input type="text" name="user_id" style="display: none" value="{{ user_info['user_id'] }}"/>
+                    <input class="btn btn-danger" type="submit" value="重置"/>
+                </form>
+            </td>
         </tr>
         <tr>
             <td>学号</td>

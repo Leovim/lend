@@ -40,6 +40,7 @@ from admin import \
     AdminPushHandler, \
     AdminResetPhoneHandler, \
     AdminResetBankNumberHandler, \
+    AdminResetDormHandler, \
     AdminAllUserHandler
 
 handlers = [
@@ -78,6 +79,7 @@ handlers = [
     (r"/nimda/pay_check/([0-9]*)", AdminPayCheckHandler),
     (r"/nimda/reset_phone", AdminResetPhoneHandler),
     (r"/nimda/reset_bank_number", AdminResetBankNumberHandler),
+    (r"/nimda/reset_dorm", AdminResetDormHandler),
     (r"/nimda/push/([0-9]*)", AdminPushHandler),
     (r"/nimda/all_user/([0-9]*)", AdminAllUserHandler),
     (r"/nimda/index", IndexHandler),

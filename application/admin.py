@@ -363,3 +363,20 @@ class AdminResetBankNumberHandler(BaseHandler):
             self.render("index.html", result_json="没有权限进行修改")
         else:
             self.redirect("/nimda/login")
+
+
+class AdminResetDormHandler(BaseHandler):
+    @tornado.web.authenticated
+    def post(self):
+        user = self.get_current_user()
+        if user == 1:
+            user_id = int(self.get_argument("user_id", None))
+            dorm = self.get_argument("dorm", None)
+            if self.user_model.reset_dorm(user_id, dorm):
+                self.redirect("/nimda/user/"+str(user_id))
+            else:
+                self.render("index.html", result_json="用户不存在")
+        elif user == 2:
+            self.render("index.html", result_json="没有权限进行修改")
+        else:
+            self.redirect("/nimda/login")
