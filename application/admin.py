@@ -12,7 +12,7 @@ sys.setdefaultencoding('utf-8')
 
 
 class BaseHandler(tornado.web.RequestHandler):
-    item_per_page = 1
+    item_per_page = 50
     user_model = UserModel()
     guarantee_model = GuaranteeModel()
     loan_model = LoanModel()
