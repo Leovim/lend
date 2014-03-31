@@ -140,6 +140,10 @@ class UserModel(BaseModel):
             return []
         return self.change_list(users)
 
+    def get_slice_users(self, start, end):
+        users = session.query(User).slice(start, end).all()
+        return self.change_list(users)
+
     @staticmethod
     def get_user_info(user_id):
         try:
