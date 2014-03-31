@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>担保关系</title>
+    <title>担保关系（待审核）</title>
     <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap-theme.min.css">
     <style>
@@ -14,25 +14,28 @@
 <body>
 <a href="/nimda/index">返回首页</a>
 <div class="container">
-    <h4>担保关系</h4>
+    <h4>担保关系（待审核）</h4>
     <table class="table table-striped">
         <thead>
         <tr>
             <th>ID</th>
             <th>担保人</th>
             <th>被担保人</th>
+            <th>通过</th>
         </tr>
         </thead>
         <tbody>
-        {% for item in guarantee %}
+        {% for item in unchecked_guarantee %}
         <tr>
             <td>{{ item['guarantee_id'] }}</td>
             <td><a href="/nimda/user/{{ item['guarantor_id'] }}">{{ item['guarantor_name'] }}</a></td>
             <td><a href="/nimda/user/{{ item['warrantee_id'] }}">{{ item['warrantee_name'] }}</a></td>
+            <td><a class="btn btn-primary" href="/nimda/guarantee_check/{{ item['guarantee_id'] }}">通过</a></td>
         </tr>
         {% end %}
         </tbody>
     </table>
+    <br />
 </div> <!-- /container -->
 <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
 <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>

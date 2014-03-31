@@ -181,7 +181,6 @@ class AdminGuaranteeHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         guarantee = self.guarantee_model.get_all_guarantee()
-        unchecked_guarantee = self.guarantee_model.get_all_unchecked_guarantee()
         for i, item in enumerate(guarantee):
             guarantor_info = self.user_model.\
                 get_user_info(guarantee[i]['guarantor_id'])
@@ -189,17 +188,25 @@ class AdminGuaranteeHandler(BaseHandler):
             warrantee_info = self.user_model.\
                 get_user_info(guarantee[i]['warrantee_id'])
             guarantee[i]['warrantee_name'] = warrantee_info['real_name']
+        self.render("nimda/guarantee.html", guarantee=guarantee)
+
+
+class AdminGuaranteeUncheckedHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        unchecked_guarantee = self.guarantee_model.get_all_unchecked_guarantee()
         for i, item in enumerate(unchecked_guarantee):
-            guarantor_info = self.user_model.\
+            guarantor_info = self.user_model. \
                 get_user_info(unchecked_guarantee[i]['guarantor_id'])
             unchecked_guarantee[i]['guarantor_name'] = \
                 guarantor_info['real_name']
-            warrantee_info = self.user_model.\
+            warrantee_info = self.user_model. \
                 get_user_info(unchecked_guarantee[i]['warrantee_id'])
             unchecked_guarantee[i]['warrantee_name'] = \
                 warrantee_info['real_name']
-        self.render("nimda/guarantee.html", guarantee=guarantee,
+        self.render("nimda/guarantee_unchecked.html",
                     unchecked_guarantee=unchecked_guarantee)
+
 
 
 class AdminGuaranteeCheckHandler(BaseHandler):
