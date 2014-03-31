@@ -45,7 +45,14 @@
         </tr>
         <tr>
             <td>银行卡号</td>
-            <td>{{ user_info['bank_number'] }}</td>
+            <td>
+                {{ user_info['bank_number'] }}
+                <form action="/nimda/reset_bank_number" method="post">
+                    <input type="text" name="bank_number" placeholder="新银行卡号"/>
+                    <input type="text" name="user_id" style="display: none" value="{{ user_info['user_id'] }}"/>
+                    <input class="btn btn-danger" type="submit" value="重置"/>
+                </form>
+            </td>
         </tr>
         <tr>
             <td>支付宝账号</td>

@@ -347,3 +347,19 @@ class AdminResetPhoneHandler(BaseHandler):
         else:
             self.redirect("/nimda/login")
 
+
+class AdminResetBankNumberHandler(BaseHandler):
+    @tornado.web.authenticated
+    def post(self):
+        user = self.get_current_user()
+        if user == 1:
+            user_id = int(self.get_argument("user_id", None))
+            bank_number = self.get_argument("bank_number", None)
+            if self.user_model.reset_bank_number(user_id, bank_number):
+                self.redirect("/nimda/user/"+str(user_id))
+            else:
+                self.render("index.html", result_json="用户不存在")
+        elif user == 2:
+            self.render("index.html", result_json="没有权限进行修改")
+        else:
+            self.redirect("/nimda/login")
