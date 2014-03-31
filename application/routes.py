@@ -19,7 +19,8 @@ from controllers import \
     GuaranteeDeleteHandler, \
     PasswordHandler, \
     SendSmsHandler, \
-    UploadHandler
+    UploadHandler, \
+    InterestHandler
 
 from admin import \
     IndexHandler, \
@@ -54,6 +55,7 @@ handlers = [
     (r"/password", PasswordHandler),
     (r"/send_sms", SendSmsHandler),
     (r"/upload", UploadHandler),
+    (r"/interest", InterestHandler),
     (r"/static/(.*)", tornado.web.StaticFileHandler,
      dict(path=settings['static_path'])),
     (r"/nimda/login", AdminLoginHandler),

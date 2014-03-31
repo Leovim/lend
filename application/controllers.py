@@ -235,12 +235,12 @@ class GuaranteeHandler(BaseHandler):
 
 class LoginHandler(BaseHandler):
     def post(self):
-        username = self.get_argument("username", None)
+        phone = self.get_argument("phone", None)
         password = self.get_argument("password", None)
 
-        user_id = self.user_model.check_username_exist(username)
+        user_id = self.user_model.check_phone_exist(phone)
         if not user_id:
-            # username not exist
+            # phone not exist
             result_json = json.dumps({'result': 0}, separators=(',', ':'),
                                      indent=4, encoding="utf-8",
                                      ensure_ascii=False)
@@ -993,6 +993,49 @@ class UploadHandler(BaseHandler):
         tmp_file.close()
 
         result_json = json.dumps({'result': pic_name}, separators=(',', ':'),
+                                 encoding="utf-8", indent=4,
+                                 ensure_ascii=False)
+        self.render("index.html", title="Lend", result_json=result_json)
+
+
+class InterestHandler(BaseHandler):
+    def post(self):
+        user = self.get_current_user()
+        if not user:
+            # not logged in
+            result_json = json.dumps({'result': 0}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+
+        loan_amount = int(self.get_argument("loan_amount", None))
+        term = int(self.get_argument("term", None))
+
+        # 检验额度，估计贷款各段利息，计算利息，根据已担保人数进行利息减免，计算手续费，计算到期日期，获取被担保人ID，写入数据库
+        if self.loan_model.check_total_loan_money(user['user_id'],
+                                                  loan_amount):
+            # 超额
+            result_json = json.dumps({'result': 2}, separators=(',', ':'),
+                                     encoding="utf-8", indent=4,
+                                     ensure_ascii=False)
+            self.render("index.html", title="Lend", result_json=result_json)
+            return
+
+        interest = self.calc_interest(loan_amount, term)
+        warrantee_reduce = self.loan_model.get_warrantee_reduce(user['user_id'])
+        interest = self.interest_round(interest * warrantee_reduce)
+        fee = 5
+        remain_amount = loan_amount + interest + fee
+
+        result = dict(
+            loan_amount=loan_amount,
+            remain_amount=remain_amount,
+            interest=interest,
+            fee=fee,
+        )
+
+        result_json = json.dumps({'result': 1, 'interest': result}, separators=(',', ':'),
                                  encoding="utf-8", indent=4,
                                  ensure_ascii=False)
         self.render("index.html", title="Lend", result_json=result_json)
