@@ -336,6 +336,10 @@ class GuaranteeModel(BaseModel):
             return []
         return self.change_list(guarantee)
 
+    @staticmethod
+    def get_guarantees_number():
+        return session.query(Guarantee).count()
+
     def get_all_unchecked_guarantee(self):
         try:
             guarantee = session.query(Guarantee).filter(Guarantee.status == 0)\
@@ -466,9 +470,13 @@ class LoanModel(BaseModel):
         return self.change_list(loans)
 
     def get_slice_ing_loans(self, start, end):
-        loans = session.query(Loan).filter(Loan.check_status == 1)\
-            .order_by(Loan.loan_id.desc()).all()
+        loans = session.query(Loan).filter(Loan.check_status == 1).\
+            order_by(Loan.loan_id.desc()).slice(start, end).all()
         return self.change_list(loans)
+
+    @staticmethod
+    def get_ing_loan_number():
+        return session.query(Loan).filter(Loan.check_status == 1).count()
 
     def get_all_complete_loans(self):
         try:
@@ -480,7 +488,7 @@ class LoanModel(BaseModel):
 
     def get_slice_complete_loans(self, start, end):
         loans = session.query(Loan).filter(Loan.check_status == 2) \
-            .order_by(Loan.loan_id.desc()).all()
+            .order_by(Loan.loan_id.desc()).slice(start, end).all()
         return self.change_list(loans)
 
     @staticmethod
