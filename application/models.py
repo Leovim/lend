@@ -151,6 +151,15 @@ class UserModel(BaseModel):
         user.bank_number = bank_number
         return True
 
+    @staticmethod
+    def reset_dorm(user_id, dorm):
+        try:
+            user = session.query(User).filter(User.user_id == user_id).one()
+        except NoResultFound:
+            return False
+        user.dorm = dorm
+        return True
+
     def get_all_users(self):
         try:
             users = session.query(User).all()
