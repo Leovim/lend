@@ -166,6 +166,10 @@ class UserModel(BaseModel):
         except NoResultFound:
             return []
         return self.change_list(users)
+    
+    @staticmethod
+    def get_users_number():
+        return session.query(User).count()
 
     def get_slice_users(self, start, end):
         users = session.query(User).slice(start, end).all()
