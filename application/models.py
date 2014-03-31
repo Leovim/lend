@@ -492,6 +492,10 @@ class LoanModel(BaseModel):
         return self.change_list(loans)
 
     @staticmethod
+    def get_complete_loan_number():
+        return session.query(Loan).filter(Loan.check_status == 2).count()
+
+    @staticmethod
     def get_warrantee_reduce(user_id):
         try:
             count = session.query(Guarantee). \

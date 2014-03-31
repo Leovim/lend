@@ -210,8 +210,33 @@ class AdminLoanUncheckedHandler(BaseHandler):
 
 class AdminLoanCompleteHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self):
-        complete_loans = self.loan_model.get_all_complete_loans()
+    def get(self, page):
+        try:
+            page = int(page)
+        except ValueError:
+            self.send_error(404)
+
+        start = self.item_per_page * (page - 1)
+        end = self.item_per_page * page
+        complete_loans = self.loan_model.get_slice_complete_loans(start, end)
+        if complete_loans == []:
+            self.send_error(404)
+
+        loan_number = self.loan_model.get_complete_loan_number()
+        if loan_number % self.item_per_page > 0:
+            page_number = loan_number / self.item_per_page + 1
+        else:
+            page_number = loan_number / self.item_per_page
+
+        next_loan = self.loan_model.get_slice_complete_loans(end, end + 1)
+        if next_loan == []:
+            next_page = 0
+        else:
+            next_page = page + 1
+        if page == 1:
+            previous_page = 0
+        else:
+            previous_page = page - 1
         for i, item in enumerate(complete_loans):
             user_info = self.user_model.get_user_info(item['user_id'])
             complete_loans[i]['real_name'] = user_info['real_name']
@@ -223,7 +248,9 @@ class AdminLoanCompleteHandler(BaseHandler):
             if item['guarantor2']:
                 guarantor2 = self.user_model.get_user_info(item['guarantor2'])
                 complete_loans[i]['guarantor2_name'] = guarantor2['real_name']
-        self.render("nimda/loan_complete.html", complete_loans=complete_loans)
+        self.render("nimda/loan_complete.html", complete_loans=complete_loans,
+                    page=page, previous_page=previous_page, next_page=next_page,
+                    page_number=page_number)
 
 class AdminLoanCheckHandler(BaseHandler):
     @tornado.web.authenticated
