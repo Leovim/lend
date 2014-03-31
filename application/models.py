@@ -142,6 +142,15 @@ class UserModel(BaseModel):
         user.phone = phone
         return True
 
+    @staticmethod
+    def reset_bank_number(user_id, bank_number):
+        try:
+            user = session.query(User).filter(User.user_id == user_id).one()
+        except NoResultFound:
+            return False
+        user.bank_number = bank_number
+        return True
+
     def get_all_users(self):
         try:
             users = session.query(User).all()
