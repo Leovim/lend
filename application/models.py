@@ -434,12 +434,22 @@ class LoanModel(BaseModel):
             return []
         return self.change_list(loans)
 
+    def get_slice_ing_loans(self, start, end):
+        loans = session.query(Loan).filter(Loan.check_status == 1)\
+            .order_by(Loan.loan_id.desc()).all()
+        return self.change_list(loans)
+
     def get_all_complete_loans(self):
         try:
             loans = session.query(Loan).filter(Loan.check_status == 2)\
                 .order_by(Loan.loan_id.desc()).all()
         except NoResultFound:
             return []
+        return self.change_list(loans)
+
+    def get_slice_complete_loans(self, start, end):
+        loans = session.query(Loan).filter(Loan.check_status == 2) \
+            .order_by(Loan.loan_id.desc()).all()
         return self.change_list(loans)
 
     @staticmethod
