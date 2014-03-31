@@ -133,6 +133,15 @@ class UserModel(BaseModel):
         user.credit = int(credit)
         # session.commit()
 
+    @staticmethod
+    def reset_phone(user_id, phone):
+        try:
+            user = session.query(User).filter(User.user_id == user_id).one()
+        except NoResultFound:
+            return False
+        user.phone = phone
+        return True
+
     def get_all_users(self):
         try:
             users = session.query(User).all()
