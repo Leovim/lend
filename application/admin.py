@@ -143,8 +143,33 @@ class AdminUserHandler(BaseHandler):
 
 class AdminLoanHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self):
-        loans = self.loan_model.get_all_ing_loans()
+    def get(self, page):
+        try:
+            page = int(page)
+        except ValueError:
+            self.send_error(404)
+
+        start = self.item_per_page * (page - 1)
+        end = self.item_per_page * page
+        loans = self.loan_model.get_slice_ing_loans(start, end)
+        if loans == []:
+            self.send_error(404)
+
+        loan_number = self.loan_model.get_ing_loan_number()
+        if loan_number % self.item_per_page > 0:
+            page_number = loan_number / self.item_per_page + 1
+        else:
+            page_number = loan_number / self.item_per_page
+
+        next_loan = self.loan_model.get_slice_ing_loans(end, end + 1)
+        if next_loan == []:
+            next_page = 0
+        else:
+            next_page = page + 1
+        if page == 1:
+            previous_page = 0
+        else:
+            previous_page = page - 1
         for i, item in enumerate(loans):
             user_info = self.user_model.get_user_info(item['user_id'])
             loans[i]['real_name'] = user_info['real_name']
@@ -159,7 +184,9 @@ class AdminLoanHandler(BaseHandler):
             if item['split_status'] == 1:
                 split_info = self.split_model.get_split_info(item['loan_id'])
                 loans[i]['split_status'] = split_info
-        self.render("nimda/loan.html", loans=loans)
+        self.render("nimda/loan.html", loans=loans, page=page,
+                    previous_page=previous_page, next_page=next_page,
+                    page_number=page_number)
 
 
 class AdminLoanUncheckedHandler(BaseHandler):
