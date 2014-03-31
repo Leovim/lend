@@ -329,3 +329,21 @@ class AdminPushHandler(BaseHandler):
         content = "你的贷款即将到期了，请尽快归还。"
         self.send_sms(phone, content)
         self.redirect('/nimda/loan')
+
+
+class AdminResetPhoneHandler(BaseHandler):
+    @tornado.web.authenticated
+    def post(self):
+        user = self.get_current_user()
+        if user == 1:
+            user_id = int(self.get_argument("user_id", None))
+            phone = self.get_argument("phone", None)
+            if self.user_model.reset_phone(user_id, phone):
+                self.redirect("/nimda/user/"+str(user_id))
+            else:
+                self.render("index.html", result_json="用户不存在")
+        elif user == 2:
+            self.render("index.html", result_json="没有权限进行修改")
+        else:
+            self.redirect("/nimda/login")
+
