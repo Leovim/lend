@@ -261,6 +261,14 @@ class GuaranteeModel(BaseModel):
             return False
         return g.guarantee_id
 
+    def get_guarantee_info(self, guarantee_id):
+        try:
+            g = session.query(Guarantee).\
+                filter(Guarantee.guarantee_id == guarantee_id).one()
+        except NoResultFound:
+            return False
+        return g.as_dict()
+
     @staticmethod
     def get_user_guarantor(user_id):
         # 担保人

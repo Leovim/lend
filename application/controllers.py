@@ -964,7 +964,7 @@ class SendSmsHandler(BaseHandler):
     def post(self):
         phone = self.get_argument("phone", None)
         verify = self.get_argument("verify", None)
-        content = "您的验证码是"
+        content = "验证码："
         content = content + verify
         result = self.send_sms(phone, content)
 

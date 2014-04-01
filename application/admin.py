@@ -155,6 +155,9 @@ class AdminUserCheckHandler(BaseHandler):
         if user == 1:
             user_id = int(user_id)
             self.user_model.update_user_status(user_id, 1)
+            user_info = self.user_model.get_user_info(user_id)
+            content = "您的审核已通过，现在可以开始借款了。"
+            self.send_sms(user_info['phone'], content)
             self.redirect("/nimda/user_unchecked")
         elif user == 2:
             self.render("index.html", result_json="没有权限进行修改")
@@ -279,9 +282,13 @@ class AdminLoanCheckHandler(BaseHandler):
         user = self.get_current_user()
         if user == 1:
             loan_id = int(loan_id)
+            loan_info = self.loan_model.get_loan_info(loan_id)
             behaviour = self.behaviour_model.get_loan_loan_behaviour(loan_id)
+            user_info = self.user_model.get_user_info(loan_info['user_id'])
             self.behaviour_model.change_status(behaviour['behaviour_id'], 1)
             self.loan_model.change_check_status(loan_id, 1)
+            content = "您的借款已汇出，请注意查收。"
+            self.send_sms(user_info['phone'],content)
             self.redirect("/nimda/loan_unchecked")
         elif user == 2:
             self.render("index.html", result_json="没有权限进行修改")
@@ -354,6 +361,16 @@ class AdminGuaranteeCheckHandler(BaseHandler):
         if user == 1:
             guarantee_id = int(guarantee_id)
             self.guarantee_model.change_status(guarantee_id)
+            guarantee_info = self.guarantee_model.get_guarantee_info(guarantee_id)
+            if not guarantee_info:
+                self.render("index.html", result_json="担保关系不存在")
+                return
+            guarantor_info = self.user_model.get_user_info(guarantee_info['guarantor_id'])
+            warrantee_info = self.user_model.get_user_info(guarantee_info['warrantee_id'])
+            content = "您和" + warrantee_info['real_name'] + "已经成功建立担保关系。"
+            self.send_sms(guarantor_info['phone'], content)
+            content = "您和" + guarantor_info['real_name'] + "已经成功建立担保关系。"
+            self.send_sms(warrantee_info['phone'], content)
             self.redirect("/nimda/guarantee_unchecked")
         elif user == 2:
             self.render("index.html", result_json="没有权限进行修改")
@@ -419,6 +436,9 @@ class AdminPayCheckHandler(BaseHandler):
             self.behaviour_model.change_status(bhv_info['behaviour_id'], 1)
             self.pay_model.update_check_status(pay_id)
             loan_info = self.loan_model.get_loan_info(pay_info['loan_id'])
+            user_info = self.user_model.get_user_info(loan_info['user_id'])
+            content = "您的还款已成功，谢谢您的使用。"
+            self.send_sms(user_info['phone'], content)
             if loan_info['remain_amount'] == 0:
                 # 已完成
                 self.loan_model.change_check_status(loan_info['loan_id'], 2)
@@ -432,11 +452,17 @@ class AdminPayCheckHandler(BaseHandler):
 class AdminPushHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, user_id):
-        user_info = self.user_model.get_user_info(user_id)
-        phone = user_info['phone']
-        content = "你的贷款即将到期了，请尽快归还。"
-        self.send_sms(phone, content)
-        self.redirect('/nimda/loan')
+        user = self.get_current_user()
+        if user == 1:
+            user_info = self.user_model.get_user_info(user_id)
+            phone = user_info['phone']
+            content = "你的贷款即将到期了，请尽快归还。"
+            self.send_sms(phone, content)
+            self.redirect('/nimda/loan')
+        elif user == 2:
+            self.render("index.html", result_json="没有权限进行修改")
+        else:
+            self.redirect("/nimda/login")
 
 
 class AdminResetPhoneHandler(BaseHandler):
