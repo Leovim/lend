@@ -141,6 +141,27 @@ class AdminUserHandler(BaseHandler):
         self.render("nimda/user.html", user_info=user_info, loans=loans)
 
 
+class AdminUserUncheckedHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        users = self.user_model.get_all_unchecked_users()
+        self.render("nimda/user_unchecked.html", users=users)
+
+
+class AdminUserCheckHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, user_id):
+        user = self.get_current_user()
+        if user == 1:
+            user_id = int(user_id)
+            self.user_model.update_user_status(user_id, 1)
+            self.redirect("/nimda/user_unchecked")
+        elif user == 2:
+            self.render("index.html", result_json="没有权限进行修改")
+        else:
+            self.redirect("/nimda/login")
+
+
 class AdminLoanHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, page):

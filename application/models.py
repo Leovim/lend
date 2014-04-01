@@ -70,7 +70,7 @@ class UserModel(BaseModel):
         up_user.pic2 = user['pic2']
         up_user.pic3 = user['pic3']
         up_user.pic4 = user['pic4']
-        up_user.status = 1
+        up_user.status = 2
         # session.commit()
 
     @staticmethod
@@ -121,10 +121,11 @@ class UserModel(BaseModel):
         # session.commit()
 
     @staticmethod
-    def update_user_status(user_id):
-        # change user status to 1 完善资料之后
+    def update_user_status(user_id, status):
+        # change user status to 2 完善资料之后
+        # change user status to 1 通过审核之后
         up_user = session.query(User).filter(User.user_id == user_id).one()
-        up_user.status = 1
+        up_user.status = status
         # session.commit()
 
     @staticmethod
@@ -165,6 +166,10 @@ class UserModel(BaseModel):
             users = session.query(User).all()
         except NoResultFound:
             return []
+        return self.change_list(users)
+
+    def get_all_unchecked_users(self):
+        users = session.query(User).filter(User.status == 2).all()
         return self.change_list(users)
     
     @staticmethod

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>用户（待审核）</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap-theme.min.css">
+    <style>
+        .container {
+            margin-top: 100px;
+        }
+        .container table tr td {
+            padding-top: 3px;
+            padding-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+<a href="/nimda/index">返回首页</a>
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>用户ID</th>
+            <th>用户名</th>
+            <th>电话</th>
+            <th>真实姓名</th>
+            <th>审核通过</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user['user_id'] }}</td>
+            <td><a href="/nimda/user/{{ user['user_id'] }}">{{ user['username'] }}</a></td>
+            <td>{{ user['phone'] }}</td>
+            <td>{{ user['real_name'] }}</td>
+            <td><a class="btn btn-primary" href="/nimda/user_check/{{ user['user_id'] }}">通过</a></td>
+        </tr>
+        {% end %}
+        </tbody>
+    </table>
+</div> <!-- /container -->
+<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -28,6 +28,8 @@ from admin import \
     AdminLogoutHandler, \
     AdminAuthenticateHandler, \
     AdminUserHandler, \
+    AdminUserUncheckedHandler, \
+    AdminUserCheckHandler, \
     AdminGuaranteeHandler, \
     AdminGuaranteeUncheckedHandler, \
     AdminGuaranteeCheckHandler, \
@@ -68,6 +70,8 @@ handlers = [
     (r"/nimda/logout", AdminLogoutHandler),
     (r"/nimda/authenticate", AdminAuthenticateHandler),
     (r"/nimda/user/([0-9]*)", AdminUserHandler),
+    (r"/nimda/user_unchecked", AdminUserUncheckedHandler),
+    (r"/nimda/user_check/([0-9]*)", AdminUserCheckHandler),
     (r"/nimda/guarantee/([0-9]*)", AdminGuaranteeHandler),
     (r"/nimda/guarantee_unchecked", AdminGuaranteeUncheckedHandler),
     (r"/nimda/guarantee_check/([0-9]*)", AdminGuaranteeCheckHandler),

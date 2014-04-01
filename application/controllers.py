@@ -816,9 +816,8 @@ class GuaranteeRequestHandler(BaseHandler):
             self.render("index.html", title="Lend", result_json=result_json)
             return
 
-        guarantor_name = self.get_argument("guarantor_name", None)
         phone = self.get_argument("phone", None)
-        guarantor_id = self.user_model.check_username_exist(guarantor_name)
+        guarantor_id = self.user_model.check_phone_exist(phone)
         if not guarantor_id:
             # 担保人不存在
             result_json = json.dumps({'result': 2},
@@ -828,7 +827,6 @@ class GuaranteeRequestHandler(BaseHandler):
             self.render("index.html", title="Lend", result_json=result_json)
             return
 
-        # todo 两人已建立担保关，告诉路少德
         if self.guarantee_model.check_guarantee_exist(guarantor_id, user['user_id']):
             # 两人已建立担保关系
             result_json = json.dumps({'result': 7},
