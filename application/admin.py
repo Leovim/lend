@@ -39,6 +39,7 @@ class BaseHandler(tornado.web.RequestHandler):
         n_content = urllib.urlencode(data)
         url = url + n_content
         response = yield http.fetch(url)
+        print response.body
         self.finish()
         if response.body == '1':
             yield 1
@@ -456,9 +457,9 @@ class AdminPushHandler(BaseHandler):
         if user == 1:
             user_info = self.user_model.get_user_info(user_id)
             phone = user_info['phone']
-            content = "你的贷款即将到期了，请尽快归还。"
+            content = "您的借款即将到期，请尽快归还。"
             self.send_sms(phone, content)
-            self.redirect('/nimda/loan')
+            self.redirect('/nimda/loan/1')
         elif user == 2:
             self.render("index.html", result_json="没有权限进行修改")
         else:
